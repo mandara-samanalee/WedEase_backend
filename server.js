@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { connectDB } from './src/config/db.js';
 import routes from './src/routes/index.js';
+import { swaggerUi, swaggerSpec } from './src/config/swagger.js';
 
 dotenv.config();
 
@@ -19,10 +20,12 @@ app.use((req, res, next) => {
     next();
 })
 
+// Swagger docs route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api", routes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
 
