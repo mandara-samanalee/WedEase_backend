@@ -7,11 +7,11 @@ const options = {
     info: {
       title: 'Wedease API',
       version: '1.0.0',
-      description: 'API documentation for Wedease backend',
+      description: 'Swagger API documentation for Wedease backend',
     },
     servers: [
       {
-        url: 'http://localhost3000', 
+        url: 'http://localhost:5000', 
       },
     ],
   },
@@ -21,3 +21,5 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 export { swaggerUi, swaggerSpec };
+
+
