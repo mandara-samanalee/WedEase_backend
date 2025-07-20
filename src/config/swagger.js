@@ -12,7 +12,7 @@ const options = {
     servers: [
       {
         url: 'http://localhost:5000/api', 
-      },
+      },// Change this to your actual server URL
     ],
   },
   apis: ['./src/routes/**/*.js'], // where Swagger will look
