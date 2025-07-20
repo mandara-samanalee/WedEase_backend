@@ -11,7 +11,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000', 
+        url: 'http://localhost:5000/api', 
       },
     ],
   },
@@ -20,6 +20,8 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 
-export { swaggerUi, swaggerSpec };
+export const setupSwagger = (app) => {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+};
 
 

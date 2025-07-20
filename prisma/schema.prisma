@@ -25,10 +25,11 @@ model User {
 model Vendor {
   id              Int   @id @default(autoincrement())
   userId          String @unique
-  fullName        String
+  firstName        String
+  lastName         String
   email           String @unique
   address         String
-  city_distric    String?
+  city            String
   contactNo       String
   createdAt       DateTime @default(now())
 }
@@ -36,7 +37,11 @@ model Vendor {
 model customer {
   id        Int @id @default(autoincrement())
   userId    String @unique
-  fullName  String
+  firstName  String
+  lastName   String
   email     String @unique
+  address   String?
+  city      String?
+  contactNo String?
   createdAt DateTime @default(now())
 }
