@@ -25,7 +25,7 @@ export const createUserModel = async (customerData) => {
     try {
         const userId = await generateCustomerId();
 
-        const newuser = await prisma.user.create({
+        const newuser = await prisma.User.create({
             data: {
                 userId,
                 email: customerData.email,
@@ -47,17 +47,5 @@ export const createUserModel = async (customerData) => {
     } catch (error) {
         console.error("Database error:", error);
         throw new Error("Failed to create user");
-    }
-}
-
-// find user by email
-export const findUserByEmail = async (email) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: { email }
-        })
-        return user;
-    } catch (error) {
-        throw new Error("Failed to find user by email");
     }
 }

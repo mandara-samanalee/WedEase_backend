@@ -68,3 +68,14 @@ export const changePassword = async (userId, currentPassword, newPassword, confi
     }
 };
 
+// find user by email
+export const findUserByEmail = async (email) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email }
+        })
+        return user;
+    } catch (error) {
+        throw new Error("Failed to find user by email");
+    }
+}

@@ -1,4 +1,5 @@
-import { createUserModel, findUserByEmail } from "../models/customer.model.js";
+import { createUserModel } from "../models/customer.model.js";
+import { findUserByEmail } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 
 //create new user
@@ -35,7 +36,7 @@ export const createUserController = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(req.body.password, SALT_ROUNDS);
 
-        const newUser = await createUserModel({
+        const newCustomer = await createUserModel({
             ...req.body,
             password: hashedPassword
         });
@@ -44,7 +45,7 @@ export const createUserController = async (req, res) => {
             code: 201,
             status: "true",
             message: "User registered successfully",
-            data: newUser,
+            data: newCustomer,
         });
     } catch (error) {
         console.error("Error in registerController:", error);

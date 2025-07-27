@@ -1,5 +1,8 @@
-import { updateUserPassword, isSamePassword, changePassword } from '../models/user.model.js';
-import { findUserByEmail } from '../models/customer.model.js';
+import { 
+    updateUserPassword, 
+    isSamePassword, 
+    changePassword,  
+    findUserByEmail } from '../models/user.model.js';
 
 // Controller function for Forgot password 
 export const forgotPassword = async (req, res) => {

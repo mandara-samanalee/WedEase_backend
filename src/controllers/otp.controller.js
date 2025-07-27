@@ -1,6 +1,5 @@
-import prisma from "../config/db.js";
 import { saveOtp,  findOtpById, deleteOtpById } from "../models/otp.model.js";
-import { findUserByEmail } from '../models/customer.model.js';
+import { findUserByEmail } from '../models/user.model.js';
 
 // Generate otp
 export const createOtp = async (req, res) => {
