@@ -29,6 +29,6 @@ const router = express.Router();
  *       201:
  *         description: Customer registered successfully
  */
-router.post('/register', createUserController);
+router.post('/customer/register', createUserController);
 
 export default router;
