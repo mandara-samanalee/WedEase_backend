@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables from .env file
 
 const prisma = new PrismaClient({
-  log: ["query", "warn", "error"],
+    log: ["query", "warn", "error"],
 });
 
 export const connectDB = async () => {
@@ -12,7 +12,7 @@ export const connectDB = async () => {
         await prisma.$connect();
         console.log('✅ Database connected successfully');
     } catch {
-        console.error ('❌ Database connection failed');
+        console.error('❌ Database connection failed');
         process.exit(1); // Exit the process with failure
     }
 }
