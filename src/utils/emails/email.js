@@ -35,7 +35,7 @@ export const sendOtpEmail = (emailData) => {
       border-radius: 8px;
       margin: 20px 0;
       letter-spacing: 5px;
-      color: #e91e63;
+      color: #dc16b8ff;
     }
     .footer {
       text-align: center;
