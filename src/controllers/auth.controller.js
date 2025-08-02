@@ -34,9 +34,7 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-        { userId: user.userId, email: user.email, role: user.role }, 
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: JWT_EXPIRES_IN }
+        { userId: user.userId, email: user.email, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: JWT_EXPIRES_IN }
     );
 
     return res.status(200).json({
@@ -47,6 +45,7 @@ export const loginUser = async (req, res) => {
             userId: user.userId,
             email: user.email,
             role: user.role,
+            token: token
         }
     })
 } catch (error) {
@@ -54,6 +53,59 @@ export const loginUser = async (req, res) => {
         status: false,
         code: 500,
         message: "Internal server error"
+    });
+}
+}
+
+// get user details by userId
+export const getUserDetails = async (req, res) => {
+    try {
+    const userId = req.user.userId;
+    if (!userId) {
+        return res.status(400).json({
+            status: false,
+            code: 400,
+            message: 'User ID missing from token'
+        });
+    }
+
+    const customer = await prisma.customer.findUnique({
+        where: { userId: userId }
+    });
+    if (customer) {
+        return res.status(200).json({
+            status: true,
+            code: 200,
+            message: 'Customer details retrieved successfully',
+            data: customer,
+            role: 'CUSTOMER'
+        });
+    }
+
+    const vendor = await prisma.vendor.findUnique({
+        where: { userId: userId }
+    });
+    if (vendor) {
+        return res.status(200).json({
+            status: true,
+            code: 200,
+            message: 'Vendor details retrieved successfully',
+            data: vendor,
+            role: 'VENDOR'
+        })
+    }
+
+    return res.status(404).json({
+        status: false,
+        code: 404,
+        message: 'User not found'
+    });
+} catch (error) {
+    console.error('Error retrieving user details:', error);
+    return res.status(500).json({
+        status: false,
+        code: 500,
+        message: 'Internal server error'
     });
 }
 }

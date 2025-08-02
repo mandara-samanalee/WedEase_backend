@@ -1,5 +1,7 @@
 import { saveOtp,  findOtpById, deleteOtpById } from "../models/otp.model.js";
 import { findUserByEmail } from '../models/user.model.js';
+import MailService from '../services/email.service.js';
+import { sendOtpEmail } from '../utils/emails/email.js';
 
 // Generate otp
 export const createOtp = async (req, res) => {
@@ -24,12 +26,25 @@ export const createOtp = async (req, res) => {
 
         const { otp, savedOtp } = await saveOtp(recipient);
 
-        console.log("OtP id:",savedOtp.otpId, "OTP:",otp); 
+        console.log(`OTP Generated for ${recipient}:`, otp);
+
+        // prepare email
+        const { subject, body } = sendOtpEmail(otp, recipient); 
+        const mailService = new MailService(recipient, subject, body);
+
+        const mailResponse = await mailService.sendEmail();
+        if (!mailResponse) {
+            return res.status(500).json({
+                status: false,
+                code: 500,
+                error: 'Failed to send OTP email'
+            });
+        }
 
     return res.status(201).json({
         status: true,
         code: 201,
-        message: `OTP has been generated successfully for ${recipient}`,
+        message: `OTP has been successfully sent to ${recipient}`,
         otpId: savedOtp.id, 
     });
     } catch (error) {

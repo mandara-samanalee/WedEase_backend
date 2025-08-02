@@ -26,6 +26,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.17",
     "prisma": "^6.13.0"
   },
   "keywords": [],
