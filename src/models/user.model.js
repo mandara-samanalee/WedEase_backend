@@ -1,4 +1,6 @@
-// Forgot password
+import prisma from '../config/db.js';
+import bcrypt from 'bcrypt';
+
 // Compare new password with current hashed password
 export const isSamePassword = async (plainPassword, hashedPassword) => {
     try {
@@ -28,16 +30,16 @@ export const updateUserPassword = async (email, newPassword) => {
 export const changePassword = async (userId, currentPassword, newPassword, confirmPassword) => {
     try {
         if (newPassword !== confirmPassword) {
-            return { 
-                success: false, 
+            return {
+                success: false,
                 message: 'New password and confirm password do not match.'
             };
         }
 
         if (newPassword === currentPassword) {
-            return { 
-                success: false, 
-                message: 'New password cannot be the same as current password.' 
+            return {
+                success: false,
+                message: 'New password cannot be the same as current password.'
             };
         }
 
@@ -77,5 +79,40 @@ export const findUserByEmail = async (email) => {
         return user;
     } catch (error) {
         throw new Error("Failed to find user by email");
+    }
+}
+
+// delete account
+export const deleteUserAccountModel = async (userId) => {
+    try {
+        const customer = await prisma.customer.findUnique({ where: { userId } });
+        const vendor = await prisma.vendor.findUnique({ where: { userId } });
+
+        if (!customer && !vendor) {
+            throw new Error('No customer or vendor profile found for this user.');
+        }
+
+        if (customer) {
+            await prisma.customer.delete({
+                where: { userId }
+            });
+        }
+
+        if (vendor) {
+            await prisma.vendor.delete({
+                where: { userId }
+            });
+        }
+
+        await prisma.User.delete({
+            where: { userId }
+        });
+
+        return {
+            success: true,
+            message: 'User account deleted successfully.'
+        };
+    } catch (error) {
+        throw new Error(`Failed to delete user account: ${error.message}`);
     }
 }

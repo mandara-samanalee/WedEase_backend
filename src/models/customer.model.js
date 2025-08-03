@@ -49,3 +49,22 @@ export const createUserModel = async (customerData) => {
         throw new Error("Failed to create user");
     }
 }
+
+// update customer profile
+export const updateCustomerProfileModel = async (userId, updateData) => {
+    try {
+        // Filter out undefined values to avoid updating with null
+        const filteredData = Object.fromEntries(
+            Object.entries(updateData).filter(([_, value]) => value !== undefined)
+        );
+
+        const updatedCustomer = await prisma.customer.update({
+            where: { userId },
+            data: filteredData,
+        });
+        return updatedCustomer;
+    } catch (error) {
+        console.error("Database error:", error);
+        throw new Error("Failed to update customer profile");
+    }
+};

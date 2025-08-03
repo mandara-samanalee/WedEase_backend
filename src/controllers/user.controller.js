@@ -2,7 +2,9 @@ import {
     updateUserPassword, 
     isSamePassword, 
     changePassword,  
-    findUserByEmail } from '../models/user.model.js';
+    findUserByEmail,
+    deleteUserAccountModel
+} from '../models/user.model.js';
 
 // Controller function for Forgot password 
 export const forgotPassword = async (req, res) => {
@@ -88,3 +90,36 @@ export const changePasswordController = async (req, res) => {
         status: 'true',
         message: 'Password changed successfully'});
 };
+
+
+// delete user account
+export const deleteUserAccountController = async (req, res) => {
+    const { userId } = req.params;
+    
+    try {
+        if (!userId) {
+            return res.status(400).json({
+                code: 400,
+                status: "false",
+                message: "User ID is required",
+            });
+        }
+
+        const result = await deleteUserAccountModel(userId);
+
+        return res.status(200).json({
+            code: 200,
+            status: "true",
+            message: "User account deleted successfully",
+            data: result,
+        });
+    } catch (error) {
+        console.error("Error in deleteUserAccountController:", error);
+        return res.status(500).json({
+            code: 500,
+            status: "false",
+            message: "Internal server error",
+            data: null,
+        });
+    }
+}

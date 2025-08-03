@@ -1,4 +1,8 @@
-import { forgotPassword, changePasswordController } from '../controllers/user.controller.js';
+import { 
+    forgotPassword, 
+    changePasswordController,
+    deleteUserAccountController  
+} from '../controllers/user.controller.js';
 import express from 'express';
 
 const router = express.Router();
@@ -71,5 +75,7 @@ router.post('/user/forgot-password', forgotPassword);
  *         description: Internal server error
  */
 router.post('/user/change-password/:userId', changePasswordController);
+
+router.delete('/delete-account/:userId', deleteUserAccountController );
 
 export default router;

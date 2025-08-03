@@ -1,5 +1,8 @@
 import express from 'express';
-import { createUserController } from "../controllers/customer.controller.js";
+import { 
+    createUserController, updateCustomerProfileController 
+} from "../controllers/customer.controller.js";
+import { upload } from '../middleware/upload.js';
 
 const router = express.Router();
 /**
@@ -30,5 +33,7 @@ const router = express.Router();
  *         description: Customer registered successfully
  */
 router.post('/customer/register', createUserController);
+
+router.put('/customer/profile/:userId', upload.single('image'), updateCustomerProfileController);
 
 export default router;
