@@ -1,7 +1,8 @@
 import { saveOtp,  findOtpById, deleteOtpById } from "../models/otp.model.js";
-import { findUserByEmail } from '../models/user.model.js';
+import { findUserData } from '../models/user.model.js';
 import MailService from '../services/email.service.js';
 import { sendOtpEmail } from '../utils/emails/email.js';
+import bcrypt from 'bcrypt';
 
 // Generate otp
 export const createOtp = async (req, res) => {
@@ -15,8 +16,9 @@ export const createOtp = async (req, res) => {
                 error: 'Recipient header is required' });
         }
 
-            const user = await findUserByEmail (recipient);
-            if (!user) {
+            const userDetails = await findUserData(recipient);
+
+            if (!userDetails || !userDetails.user) {
                 return res.status(400).json({
                     status: false,
                     code: 400,
@@ -24,12 +26,22 @@ export const createOtp = async (req, res) => {
                 });
             }
 
+            const { user, profile } = userDetails;
+
+            if (!profile) {
+            return res.status(400).json({
+                status: false,
+                code: 400,
+                message: "User profile not found.",
+            });
+        }
+
         const { otp, savedOtp } = await saveOtp(recipient);
 
         console.log(`OTP Generated for ${recipient}:`, otp);
 
         // prepare email
-        const { subject, body } = sendOtpEmail(otp, recipient); 
+        const { subject, body } = sendOtpEmail(otp, profile.firstName); 
         const mailService = new MailService(recipient, subject, body);
 
         const mailResponse = await mailService.sendEmail();

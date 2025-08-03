@@ -75,7 +75,12 @@ export const findUserByEmail = async (email) => {
     try {
         const user = await prisma.user.findUnique({
             where: { email }
-        })
+        });
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        console.log("User found:", user);
         return user;
     } catch (error) {
         throw new Error("Failed to find user by email");
@@ -114,5 +119,41 @@ export const deleteUserAccountModel = async (userId) => {
         };
     } catch (error) {
         throw new Error(`Failed to delete user account: ${error.message}`);
+    }
+}
+
+
+// find user by email
+export const findUserData = async (email) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email },
+            select: {
+                userId: true,
+                email: true,
+                role: true,
+            }
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        let profile = null;
+        //Fetch either vendor or customer details
+        if (user.role === 'VENDOR') {
+            profile = await prisma.vendor.findUnique({
+                where: { userId: user.userId },
+            });
+        } else if (user.role === 'CUSTOMER') {
+            profile = await prisma.customer.findUnique({
+                where: { userId: user.userId },
+            });
+        }
+
+        return { user, profile };
+
+    } catch (error) {
+        throw new Error("Failed to find user by email");
     }
 }

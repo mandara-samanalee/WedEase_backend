@@ -36,7 +36,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post('/user/forgot-password', forgotPassword);
+router.post('/forgot-password', forgotPassword);
 
 /**
  * @swagger
@@ -74,8 +74,42 @@ router.post('/user/forgot-password', forgotPassword);
  *       500:
  *         description: Internal server error
  */
-router.post('/user/change-password/:userId', changePasswordController);
+router.post('/change-password/:userId', changePasswordController);
 
+
+/**
+ * @swagger
+ * /api/delete-account/{userId}:
+ *   delete:
+ *     summary: Delete user account including related customer or vendor records
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID of the user to delete
+ *         schema:
+ *           type: string
+ *           example: clxkd7n0a0000t3yd5b6d0f1e
+ *     responses:
+ *       200:
+ *         description: Account deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 code:
+ *                   type: integer
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
 router.delete('/delete-account/:userId', deleteUserAccountController );
 
 export default router;

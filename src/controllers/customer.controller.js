@@ -7,9 +7,9 @@ import bcrypt from 'bcrypt';
 import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
 
-//create new user
 const SALT_ROUNDS = 10;
 
+// create new customer
 export const createUserController = async (req, res) => {
     try {
         const { firstName, lastName, email, password, confirmPassword } = req.body;

@@ -1,6 +1,10 @@
 import { createVendorModel } from "../models/vendor.model.js";
 import { findUserByEmail } from "../models/user.model.js";
+import bcrypt from 'bcrypt';
 
+const SALT_ROUNDS = 10;
+
+// create new vendor
 export const createVendorController = async (req, res) => {
     try {
         const { firstName, lastName, email, address, city, contactNo, password, confirmPassword } = req.body;

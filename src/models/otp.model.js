@@ -12,10 +12,11 @@ export const saveOtp = async (recipient) => {
 
     // delete any existing OTP for the recipient
     await prisma.otp.deleteMany({
-        where: { recipient },
+        where: { recipient,
         expiresAt: {
             gte: new Date() 
         }
+    }
     });
 
     const savedOtp = await prisma.otp.create({

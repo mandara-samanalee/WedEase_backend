@@ -14,6 +14,4 @@ router.use('/vendor', vendorRoutes);
 router.use('/auth', authRoutes);
 router.use('/otp', otpRoutes);
 
-
-
 export default router;
