@@ -123,3 +123,32 @@ export const deleteUserAccountController = async (req, res) => {
         });
     }
 }
+
+// get user by email
+export const getUserByEmailController = async (req, res) => {
+    const { email } = req.params;
+    try {
+        const user = await findUserByEmail(email);
+        if (!user) {
+            return res.status(404).json({
+                status: false,
+                code: 404,
+                message: 'User not found.'
+            });
+        }
+        return res.status(200).json({
+            status: true,
+            code: 200,
+            message: 'User found.',
+            data: user
+        });
+    }
+    catch (error) {
+        console.error('Error in getUserByEmailController:', error.message);
+        return res.status(500).json({
+            status: false,
+            code: 500,
+            message: 'Something went wrong while fetching the user.'
+        });
+    }
+}

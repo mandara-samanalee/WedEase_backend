@@ -1,7 +1,8 @@
 import { 
     forgotPassword, 
     changePasswordController,
-    deleteUserAccountController  
+    deleteUserAccountController,
+    getUserByEmailController
 } from '../controllers/user.controller.js';
 import express from 'express';
 
@@ -111,5 +112,43 @@ router.post('/change-password/:userId', changePasswordController);
  *         description: Internal server error
  */
 router.delete('/delete-account/:userId', deleteUserAccountController );
+
+/**
+ * @swagger
+ * /user/get-byemail/{email}:
+ *   get:
+ *     summary: Get user by email
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         description: Email of the user to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   example: CUS00007
+ *                 email:
+ *                   type: string
+ *                   example: mandarass6000@gmail.com
+ *                 role:
+ *                   type: string
+ *                   example: CUSTOMER
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/get-byemail/:email', getUserByEmailController);
+
 
 export default router;

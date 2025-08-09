@@ -83,7 +83,7 @@ export const findUserByEmail = async (email) => {
         console.log("User found:", user);
         return user;
     } catch (error) {
-        throw new Error("Failed to find user by email");
+        return null;
     }
 }
 
