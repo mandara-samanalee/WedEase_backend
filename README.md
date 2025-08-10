@@ -53,7 +53,7 @@ This project includes Swagger for interactive API documentation.
 Once the application is running, open the following URL in your browser:
 
 ```
-[http://localhost:5000/api-docs/](http://localhost:5000/api-docs/)
+http://localhost:5000/api-docs/
 ```
 
 From the Swagger UI, you can:
