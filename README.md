@@ -60,4 +60,3 @@ From the Swagger UI, you can:
 - Explore all available API endpoints
 - View request/response structures
 - Test API calls directly from the browser
-```
