@@ -45,7 +45,7 @@ export const createVendorModel = async (vendorDetails) => {
                 contactNo: vendorDetails.contactNo,
             }
         });
-        return {newvendor, newuser};
+        return { newvendor, newuser };
 
     } catch (error) {
         console.error("Database error:", error);
@@ -69,5 +69,18 @@ export const updateVendorProfileModel = async (userId, updatedData) => {
     } catch (error) {
         console.error("Database error:", error);
         throw new Error("Failed to update vendor profile");
+    }
+};
+
+// get vendor details
+export const GetVendorDetailsModel = async (userId) => {
+    try {
+        const vendorDetails = await prisma.Vendor.findUnique({
+            where: { userId },
+        });
+        return vendorDetails;
+    } catch (error) {
+        console.error("Database error:", error);
+        throw new Error("Failed to retrieve vendor details");
     }
 };

@@ -1,6 +1,8 @@
 import express from 'express';
 import { 
-    createUserController, updateCustomerProfileController 
+    createUserController, 
+    updateCustomerProfileController,
+    GetCustomerDetailsController
 } from "../controllers/customer.controller.js";
 import { upload } from '../middleware/upload.js';
 
@@ -91,5 +93,8 @@ router.post('/register', createUserController);
  *         description: Server error
  */
 router.put('/profile/:userId', upload.single('image'), updateCustomerProfileController);
+
+
+router.get('/getdetails/:userId', GetCustomerDetailsController);
 
 export default router;

@@ -1,6 +1,7 @@
-import { 
-    createUserModel, 
-    updateCustomerProfileModel  
+import {
+    createUserModel,
+    updateCustomerProfileModel,
+    GetCustomerDetailsModel
 } from "../models/customer.model.js";
 import { findUserByEmail } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
@@ -66,7 +67,7 @@ export const createUserController = async (req, res) => {
 // Update customer profile
 export const updateCustomerProfileController = async (req, res) => {
     try {
-        const { userId } = req.params;    
+        const { userId } = req.params;
         const { firstName, lastName, address, city, distric, province, country, contactNo } = req.body;
 
         let imageUrl;
@@ -75,11 +76,11 @@ export const updateCustomerProfileController = async (req, res) => {
         if (req.file) {
             const result = await new Promise((resolve, reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
-                    { 
+                    {
                         folder: 'wedease_images',
                         resource_type: 'image',
                         public_id: `profile_${userId}`,
-                        overwrite: true, 
+                        overwrite: true,
                     }, (error, result) => {
                         if (error) {
                             return reject(error);
@@ -102,8 +103,8 @@ export const updateCustomerProfileController = async (req, res) => {
             address,
             city,
             contactNo,
-            distric, 
-            province, 
+            distric,
+            province,
             country,
             image: imageUrl,
         };
@@ -124,4 +125,37 @@ export const updateCustomerProfileController = async (req, res) => {
             data: null,
         });
     }
-    };
+};
+
+
+// Get customer details
+export const GetCustomerDetailsController = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const customerDetails = await GetCustomerDetailsModel(userId);
+        if (!customerDetails) {
+            return res.status(404).json({
+                code: 404,
+                status: "false",
+                message: "Customer not found",
+                data: null,
+            });
+        }
+
+        return res.status(200).json({
+            code: 200,
+            status: "true",
+            message: "Customer details retrieved successfully",
+            data: customerDetails,
+        });
+    } catch (error) {
+        console.error("Error retrieving customer details:", error);
+        return res.status(500).json({
+            code: 500,
+            status: "false",
+            message: "Internal server error",
+            data: null,
+        });
+    }
+}

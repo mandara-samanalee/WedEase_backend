@@ -68,3 +68,17 @@ export const updateCustomerProfileModel = async (userId, updateData) => {
         throw new Error("Failed to update customer profile");
     }
 };
+
+
+// get customer details
+export const GetCustomerDetailsModel = async (userId) => {
+    try {
+        const customerDetails = await prisma.customer.findUnique({
+            where: { userId },
+        });
+        return customerDetails;
+    } catch (error) {
+        console.error ("Database error:", error);
+        throw new Error("Failed to retrieve customer details");
+    }
+};

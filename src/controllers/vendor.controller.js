@@ -1,6 +1,7 @@
 import { 
     createVendorModel, 
-    updateVendorProfileModel 
+    updateVendorProfileModel,
+    GetVendorDetailsModel 
 } from "../models/vendor.model.js";
 import { findUserByEmail } from "../models/user.model.js";
 import bcrypt from 'bcrypt';
@@ -125,4 +126,35 @@ export const updateVendorProfileController = async (req, res) => {
             data: null,
         });
     }
+};
+
+// get profile details
+export const GetVendorDetailsController = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const vendorDetails = await GetVendorDetailsModel(userId)
+        if (!vendorDetails) {
+            return res.status(404).json ({
+                code: 404,
+                status: false,
+                message: "Vendor not found",
+            });
+        }
+        
+        return res.status(200).json({
+            code: 200,
+            status: true,
+            message: "Vendor details retrieved successfully",
+            data: vendorDetails,
+        });
+    } catch (error) {
+        console.error("Error retrieving vendor details:", error);
+        return res.status(500).json({
+            code: 500,
+            status: false,
+            message: "Internal server error",
+            data: null,
+        });
+    };
 };

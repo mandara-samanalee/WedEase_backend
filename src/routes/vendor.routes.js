@@ -1,5 +1,5 @@
 import express from 'express';
-import { createVendorController, updateVendorProfileController } from '../controllers/vendor.controller.js';
+import { createVendorController, updateVendorProfileController,  GetVendorDetailsController } from '../controllers/vendor.controller.js';
 import { upload } from '../middleware/upload.js';
 
 const router = express.Router();
@@ -82,5 +82,7 @@ const router = express.Router();
 router.post('/register', createVendorController);
 
 router.put('/profile/:userId', upload.single('image'),updateVendorProfileController);
+
+router.get('/getdetails/:userId', GetVendorDetailsController);
 
 export default router;
