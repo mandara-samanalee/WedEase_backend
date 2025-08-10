@@ -67,7 +67,7 @@ export const createUserController = async (req, res) => {
 export const updateCustomerProfileController = async (req, res) => {
     try {
         const { userId } = req.params;    
-        const { firstName, lastName, address, city, contactNo } = req.body;
+        const { firstName, lastName, address, city, distric, province, country, contactNo } = req.body;
 
         let imageUrl;
 
@@ -102,6 +102,9 @@ export const updateCustomerProfileController = async (req, res) => {
             address,
             city,
             contactNo,
+            distric, 
+            province, 
+            country,
             image: imageUrl,
         };
 

@@ -52,3 +52,22 @@ export const createVendorModel = async (vendorDetails) => {
         throw new Error("Failed to create user");
     }
 }
+
+// update vendor profile
+export const updateVendorProfileModel = async (userId, updatedData) => {
+    try {
+        // Filter out undefined values to avoid updating with null
+        const filteredData = Object.fromEntries(
+            Object.entries(updatedData).filter(([_, value]) => value !== undefined)
+        );
+
+        const updatedVendor = await prisma.Vendor.update({
+            where: { userId },
+            data: filteredData,
+        });
+        return updatedVendor;
+    } catch (error) {
+        console.error("Database error:", error);
+        throw new Error("Failed to update vendor profile");
+    }
+};

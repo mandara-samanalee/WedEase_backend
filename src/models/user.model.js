@@ -32,6 +32,7 @@ export const changePassword = async (userId, currentPassword, newPassword, confi
         if (newPassword !== confirmPassword) {
             return {
                 success: false,
+                code: 400,
                 message: 'New password and confirm password do not match.'
             };
         }
@@ -39,7 +40,8 @@ export const changePassword = async (userId, currentPassword, newPassword, confi
         if (newPassword === currentPassword) {
             return {
                 success: false,
-                message: 'New password cannot be the same as current password.'
+                code: 400,
+                message: 'New password cannot be same as current password.'
             };
         }
 
@@ -53,7 +55,11 @@ export const changePassword = async (userId, currentPassword, newPassword, confi
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
-            return { success: false, code: 401, message: 'Current password is incorrect.' };
+            return { 
+                success: false, 
+                code: 401, 
+                message: 'Current password is incorrect.'
+            };
         }
 
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -63,10 +69,18 @@ export const changePassword = async (userId, currentPassword, newPassword, confi
             data: { password: hashedNewPassword },
         });
 
-        return { success: true, code: 200, message: 'Password updated successfully.' };
+        return { 
+            success: true, 
+            code: 200, 
+            message: 'Password updated successfully.'
+        };
     } catch (error) {
         console.error('Error changing password:', error);
-        return { success: false, code: 500, message: 'Internal server error.' };
+        return { 
+            success: false, 
+            code: 500, 
+            message: 'Internal server error.' 
+        };
     }
 };
 

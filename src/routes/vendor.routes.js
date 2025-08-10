@@ -1,5 +1,6 @@
 import express from 'express';
-import { createVendorController } from '../controllers/vendor.controller.js';
+import { createVendorController, updateVendorProfileController } from '../controllers/vendor.controller.js';
+import { upload } from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -79,5 +80,7 @@ const router = express.Router();
  *         description: Server error
  */
 router.post('/register', createVendorController);
+
+router.put('/profile/:userId', upload.single('image'),updateVendorProfileController);
 
 export default router;

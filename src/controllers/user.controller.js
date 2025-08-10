@@ -79,10 +79,11 @@ export const changePasswordController = async (req, res) => {
     const result = await changePassword(userId, currentPassword, newPassword, confirmPassword);
 
     if (!result.success) {
-        return res.status(400).json({ 
-            code: 400,
-            status: 'false',
-            message: 'Failed to change password'});
+        return res.status(result.code ?? 400).json({ 
+            code: result.code ?? 400,
+            status: false,
+            message: result.message || 'An error occurred while changing the password.'
+        });
     }
 
     return res.status(200).json({ 

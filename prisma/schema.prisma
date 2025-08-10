@@ -14,42 +14,48 @@ datasource db {
 }
 
 model User {
-  id        Int   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   userId    String   @unique
   email     String   @unique
   password  String
-  role      String 
+  role      String
   createdAt DateTime @default(now())
 }
 
 model Vendor {
-  id              Int   @id @default(autoincrement())
-  userId          String @unique
-  firstName        String
-  lastName         String
-  email           String @unique
-  address         String
-  city            String
-  contactNo       String
-  image           String?
-  createdAt       DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
+  firstName String
+  lastName  String
+  email     String   @unique
+  address   String
+  city      String
+  distric   String?
+  province  String?
+  country   String?
+  contactNo String
+  image     String?
+  createdAt DateTime @default(now())
 }
 
 model customer {
-  id        Int @id @default(autoincrement())
-  userId    String @unique
-  firstName  String
-  lastName   String
-  email     String @unique
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
+  firstName String
+  lastName  String
+  email     String   @unique
   address   String?
   city      String?
+  distric   String?
+  province  String?
+  country   String?
   contactNo String?
-  image        String?
+  image     String?
   createdAt DateTime @default(now())
 }
 
 model Otp {
-  id     String @id @default(cuid())
+  id        String   @id @default(cuid())
   recipient String
   otp       String
   type      String
