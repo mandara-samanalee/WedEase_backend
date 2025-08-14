@@ -78,7 +78,7 @@ export const updateVendorProfileController = async (req, res) => {
             const result = await new Promise((resolve, reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
                     { 
-                        folder: 'wedease_images',
+                        folder: 'profile_images',
                         resource_type: 'image',
                         public_id: `profile_${userId}`,
                         overwrite: true, 

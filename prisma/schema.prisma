@@ -36,6 +36,9 @@ model Vendor {
   contactNo String
   image     String?
   createdAt DateTime @default(now())
+
+  // Relations (one-to-many)
+  services Service[]
 }
 
 model customer {
@@ -62,3 +65,47 @@ model Otp {
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
+
+model Service {
+  id           Int    @id @default(autoincrement())
+  serviceId    String   @unique
+  serviceName  String
+  category     String
+  description  String?
+  capacity     String?
+
+  // Location
+  latitude     Float?
+  longitude    Float?
+  country      String?
+  state        String?
+  district     String?
+  city         String?
+  address      String?
+
+  // Relations
+  vendorId     String
+  vendor       Vendor @relation(fields: [vendorId], references: [userId])
+  packages     ServicePackage[]
+  photos       ServicePhoto[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ServicePackage {
+  id          Int     @id @default(autoincrement())
+  packageName String?
+  price       Float?
+  features    String? // could be JSON if you want multiple features
+  serviceId   String
+  service     Service @relation(fields: [serviceId], references: [serviceId])
+}
+
+model ServicePhoto {
+  id        Int     @id @default(autoincrement())
+  imageUrl  String?
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [serviceId])
+}
+
