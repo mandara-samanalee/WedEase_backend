@@ -22,6 +22,11 @@ model User {
   createdAt DateTime @default(now())
 }
 
+enum UserRole {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
 model Vendor {
   id        Int      @id @default(autoincrement())
   userId    String   @unique
@@ -67,30 +72,30 @@ model Otp {
 }
 
 model Service {
-  id           Int    @id @default(autoincrement())
-  serviceId    String   @unique
-  serviceName  String
-  category     String
-  description  String?
-  capacity     String?
+  id          Int     @id @default(autoincrement())
+  serviceId   String  @unique
+  serviceName String
+  category    String
+  description String?
+  capacity    String?
 
   // Location
-  latitude     Float?
-  longitude    Float?
-  country      String?
-  state        String?
-  district     String?
-  city         String?
-  address      String?
+  latitude  Float?
+  longitude Float?
+  country   String?
+  state     String?
+  district  String?
+  city      String?
+  address   String?
 
   // Relations
-  vendorId     String
-  vendor       Vendor @relation(fields: [vendorId], references: [userId])
-  packages     ServicePackage[]
-  photos       ServicePhoto[]
+  vendorId String
+  vendor   Vendor           @relation(fields: [vendorId], references: [userId])
+  packages ServicePackage[]
+  photos   ServicePhoto[]
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ServicePackage {
@@ -107,5 +112,79 @@ model ServicePhoto {
   imageUrl  String?
   serviceId String
   service   Service @relation(fields: [serviceId], references: [serviceId])
+}
+
+model WeddingEvent {
+  id          String   @id @default(cuid())
+  title       String
+  GroomName   String?
+  BrideName   String?
+  date        DateTime?
+  startTime   DateTime?
+  endTime     DateTime?
+  location    String?
+  Description String?
+  GuestCount  Int?
+  createdBy   String
+  createdAt   DateTime           @default(now())
+  agenda      WeddingAgenda[]
+  checklist   WeddingChecklist[]
+  budget      Budget[]
+  guests      RSVP[]
+}
+
+model WeddingAgenda {
+  id           Int          @id @default(autoincrement())
+  eventId      String
+  title        String
+  startTime    DateTime
+  endTime      DateTime
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+model WeddingChecklist {
+  id        Int      @id @default(autoincrement())
+  eventId   String
+  task      String
+  status    String   @default("PENDING") // PENDING, DONE
+  assignedTo String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+model Budget {
+  id          Int      @id @default(autoincrement())
+  eventId     String
+  category    String   // Venue, Catering, Decoration
+  allocated   Float
+  spent       Float @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+model RSVP {
+  id        Int      @id @default(autoincrement())
+  eventId   String
+  guestName String
+  email     String?
+  isInvited Boolean @default(false)
+  responseStatus    String   @default("PENDING") // ACCEPTED, DECLINED, PENDING
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+enum RSVPStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WAITLISTED
 }
 
