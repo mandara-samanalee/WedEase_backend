@@ -27,6 +27,7 @@ enum UserRole {
   VENDOR
   CUSTOMER
 }
+
 model Vendor {
   id        Int      @id @default(autoincrement())
   userId    String   @unique
@@ -115,7 +116,7 @@ model ServicePhoto {
 }
 
 model WeddingEvent {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
   title       String
   GroomName   String?
   BrideName   String?
@@ -127,6 +128,8 @@ model WeddingEvent {
   GuestCount  Int?
   createdBy   String
   createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
   agenda      WeddingAgenda[]
   checklist   WeddingChecklist[]
   budget      Budget[]
@@ -136,47 +139,65 @@ model WeddingEvent {
 model WeddingAgenda {
   id           Int          @id @default(autoincrement())
   eventId      String
-  title        String
-  startTime    DateTime
-  endTime      DateTime
+  Activity     String
+  Day          DateTime
+  startTime    DateTime?
+  endTime      DateTime?
+  location     String?
   notes        String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
   WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
 }
 
 model WeddingChecklist {
-  id        Int      @id @default(autoincrement())
-  eventId   String
-  task      String
-  status    String   @default("PENDING") // PENDING, DONE
-  assignedTo String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+  id           Int                @id @default(autoincrement())
+  eventId      String
+  taskTitle    String
+  description  String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  subtasks     ChecklistSubtask[]
+  WeddingEvent WeddingEvent       @relation(fields: [eventId], references: [id])
+}
+
+model ChecklistSubtask {
+  id          Int      @id @default(autoincrement())
+  checklistId Int
+  subtask     String
+  status      String   @default("todo") //to-do, in-progress, done
+  assignedTo  String?
+  bucket      String   @default("6m")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  checklist WeddingChecklist @relation(fields: [checklistId], references: [id])
 }
 
 model Budget {
-  id          Int      @id @default(autoincrement())
-  eventId     String
-  category    String   // Venue, Catering, Decoration
-  allocated   Float
-  spent       Float @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           Int          @id @default(autoincrement())
+  eventId      String
+  category     String // Venue, Catering, Decoration
+  allocated    Float
+  spent        Float        @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
   WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
 }
 
 model RSVP {
-  id        Int      @id @default(autoincrement())
-  eventId   String
-  guestName String
-  email     String?
-  isInvited Boolean @default(false)
-  responseStatus    String   @default("PENDING") // ACCEPTED, DECLINED, PENDING
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  eventId        String
+  guestName      String
+  email          String?
+  isInvited      Boolean  @default(false)
+  responseStatus String   @default("PENDING") // ACCEPTED, DECLINED, PENDING
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
 }
@@ -187,4 +208,3 @@ enum RSVPStatus {
   DECLINED
   WAITLISTED
 }
-
