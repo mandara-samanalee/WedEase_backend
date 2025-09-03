@@ -1,5 +1,5 @@
 export const sendOtpEmail = (otp, firstName) => {
-  const subject = "Wedease OTP Verification";
+  const subject = "WedEase OTP Verification";
 
   const body = `
 <!DOCTYPE html>
@@ -31,7 +31,7 @@ export const sendOtpEmail = (otp, firstName) => {
   <div>
     <div class="content">
       <p>Hello ${firstName},</p>
-      <p>Use the following One-Time Password (OTP) to verify your email address.</p>
+      <p>📍 Use the following One-Time Password (OTP) to verify your email address.</p>
 
       <div class="otp">Your OTP: ${otp}</div>
 

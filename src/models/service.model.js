@@ -115,3 +115,20 @@ export const createServiceModel = async (serviceData, files) => {
 
     return service;
 };
+
+
+// Get all services by vendorId (with packages + photos)
+export async function getServicesByVendorId(vendorId) {
+    try {
+        const services = await prisma.service.findMany({
+            where: { vendorId },
+            include: {
+                packages: true,
+                photos: true,
+            },
+        });
+        return services;
+    } catch (error) {
+        throw new Error("Error fetching services by vendorId: " + error.message);
+    }
+}
