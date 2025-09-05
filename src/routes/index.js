@@ -6,6 +6,9 @@ import vendorRoutes from "./vendor.routes.js";
 import authRoutes from "./auth.routes.js";
 import otpRoutes from "./otp.routes.js";
 import serviceRoutes from "./service.routes.js";
+import eventRoutes from "./event.routes.js";
+import budgetRoutes from "./budget.routes.js";
+import rsvpRoutes from "./rsvp.routes.js";
 
 const router = express.Router();
 
@@ -15,5 +18,9 @@ router.use('/vendor', vendorRoutes);
 router.use('/auth', authRoutes);
 router.use('/otp', otpRoutes);
 router.use('/service', serviceRoutes);
+router.use('/event', eventRoutes);
+router.use('/budget',  budgetRoutes);
+router.use('/rsvp', rsvpRoutes);
+
 
 export default router;
