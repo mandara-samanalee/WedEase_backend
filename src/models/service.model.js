@@ -112,7 +112,6 @@ export const createServiceModel = async (serviceData, files) => {
         data,
         include: { packages: true, photos: true, vendor: true },
     });
-
     return service;
 };
 

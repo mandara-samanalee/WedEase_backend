@@ -24,7 +24,6 @@ const generateVendorId = async () => {
 export const createVendorModel = async (vendorDetails) => {
     try {
         const userId = await generateVendorId();
-
         const newuser = await prisma.User.create({
             data: {
                 userId,

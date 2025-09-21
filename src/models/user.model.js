@@ -93,7 +93,6 @@ export const findUserByEmail = async (email) => {
         if (!user) {
             throw new Error('User not found');
         }
-
         console.log("User found:", user);
         return user;
     } catch (error) {
@@ -164,9 +163,7 @@ export const findUserData = async (email) => {
                 where: { userId: user.userId },
             });
         }
-
         return { user, profile };
-
     } catch (error) {
         throw new Error("Failed to find user by email");
     }

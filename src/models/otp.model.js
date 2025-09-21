@@ -27,7 +27,6 @@ export const saveOtp = async (recipient) => {
             expiresAt,
         },
     })
-
     return { otp, savedOtp};
 };
 

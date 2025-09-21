@@ -8,16 +8,13 @@ import bcrypt from 'bcrypt';
 export const createOtp = async (req, res) => {
     try {
         const recipient = req.header('recipient');
-
         if (!recipient) {
             return res.status(400).json({
                 status: false,
                 code: 400,
                 error: 'Recipient header is required' });
         }
-
             const userDetails = await findUserData(recipient);
-
             if (!userDetails || !userDetails.user) {
                 return res.status(400).json({
                     status: false,
@@ -27,7 +24,6 @@ export const createOtp = async (req, res) => {
             }
 
             const { user, profile } = userDetails;
-
             if (!profile) {
             return res.status(400).json({
                 status: false,
@@ -37,7 +33,6 @@ export const createOtp = async (req, res) => {
         }
 
         const { otp, savedOtp } = await saveOtp(recipient);
-
         console.log(`OTP Generated for ${recipient}:`, otp);
 
         // prepare email
@@ -81,9 +76,7 @@ export const verifyOtp = async (req,res) => {
                 error: 'OTP ID and OTP are required'
             });
         }
-
         const otpRecord = await findOtpById(otpId);
-
         if (!otpRecord) {
             return res.status(404).json({
                 status: false,
@@ -101,7 +94,6 @@ export const verifyOtp = async (req,res) => {
             });
         } 
         await deleteOtpById(otpId);
-
         return res.status(200).json({
             status: true,
             code: 200,

@@ -140,8 +140,7 @@ export const GetVendorDetailsController = async (req, res) => {
                 status: false,
                 message: "Vendor not found",
             });
-        }
-        
+        }      
         return res.status(200).json({
             code: 200,
             status: true,

@@ -25,7 +25,6 @@ export const forgotPassword = async (req, res) => {
             message: 'Passwords do not match.'
         });
     }
-
     try {
         const user = await findUserByEmail(email);
         if (!user) {
@@ -46,7 +45,6 @@ export const forgotPassword = async (req, res) => {
         }
 
         await updateUserPassword(email, newPassword);
-
         return res.status(200).json({
             status: true,
             code: 200,
@@ -77,7 +75,6 @@ export const changePasswordController = async (req, res) => {
     }
 
     const result = await changePassword(userId, currentPassword, newPassword, confirmPassword);
-
     if (!result.success) {
         return res.status(result.code ?? 400).json({ 
             code: result.code ?? 400,
@@ -85,7 +82,6 @@ export const changePasswordController = async (req, res) => {
             message: result.message || 'An error occurred while changing the password.'
         });
     }
-
     return res.status(200).json({ 
         code: 200,
         status: 'true',
@@ -107,7 +103,6 @@ export const deleteUserAccountController = async (req, res) => {
         }
 
         const result = await deleteUserAccountModel(userId);
-
         return res.status(200).json({
             code: 200,
             status: "true",

@@ -145,13 +145,14 @@ model WeddingAgenda {
   id           Int          @id @default(autoincrement())
   eventId      String
   Activity     String
-  Day          DateTime
+  Date          DateTime
   startTime    DateTime?
   endTime      DateTime?
   location     String?
   notes        String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  order        Int?    // Order of the agenda item
 
   WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
 }
@@ -212,4 +213,11 @@ enum RSVPStatus {
   ACCEPTED
   DECLINED
   WAITLISTED
+}
+
+model ServiceCategories {
+  id             Int      @id @default(autoincrement())
+  name           String   @unique
+  description    String?
+  createdAt      DateTime @default(now())
 }

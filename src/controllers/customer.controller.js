@@ -14,7 +14,6 @@ const SALT_ROUNDS = 10;
 export const createUserController = async (req, res) => {
     try {
         const { firstName, lastName, email, password, confirmPassword } = req.body;
-
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
             return res.status(500).json({
                 code: 500,
@@ -30,7 +29,6 @@ export const createUserController = async (req, res) => {
                 message: "passwords do not match",
             });
         }
-
         const existingUser = await findUserByEmail(req.body.email);
         if (existingUser) {
             return res.status(500).json({
@@ -46,7 +44,6 @@ export const createUserController = async (req, res) => {
             ...req.body,
             password: hashedPassword
         });
-
         return res.status(201).json({
             code: 201,
             status: "true",
@@ -93,7 +90,6 @@ export const updateCustomerProfileController = async (req, res) => {
                 // Convert buffer into readable stream
                 streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
             });
-
             imageUrl = result.secure_url;
         }
 
@@ -110,7 +106,6 @@ export const updateCustomerProfileController = async (req, res) => {
         };
 
         const updatedCustomer = await updateCustomerProfileModel(userId, updatedData);
-
         return res.status(200).json({
             code: 200,
             status: "true",

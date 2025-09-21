@@ -18,9 +18,7 @@ export const CreateWeddingEventController = async (req, res) => {
                 message: 'No data provided to create a wedding event.',
             });
         }
-
         const newEvent = await createWeddingEvent(eventData);
-
         return res.status(201).json({
             success: true,
             code: 201,
@@ -50,9 +48,7 @@ export const GetWeddingEventController = async (req, res) => {
                 message: 'Event ID is required.',
             });
         }
-
         const event = await getWeddingEventById(eventId);
-
         if (!event) {
             return res.status(404).json({
                 success: false,
@@ -60,7 +56,6 @@ export const GetWeddingEventController = async (req, res) => {
                 message: 'Wedding event not found.',
             });
         }
-
         return res.status(200).json({
             success: true,
             code: 200,
@@ -82,7 +77,6 @@ export const GetWeddingEventController = async (req, res) => {
 export const GetWeddingEventsByCreatorController = async (req, res) => {
     try {
         const { createdBy } = req.params;
-
         if (!createdBy) {
             return res.status(400).json({
                 success: false,
@@ -90,9 +84,7 @@ export const GetWeddingEventsByCreatorController = async (req, res) => {
                 message: 'Created by parameter is required.',
             });
         }
-
         const events = await getWeddingEventsByCreator(createdBy);
-
         if (!events || events.length === 0) {
             return res.status(404).json({
                 success: true,
@@ -100,7 +92,6 @@ export const GetWeddingEventsByCreatorController = async (req, res) => {
                 message: 'No wedding events found for the specified user.',
             });
         }
-
         return res.status(200).json({
             success: true,
             code: 200,
@@ -123,7 +114,6 @@ export const UpdateWeddingEventController = async (req, res) => {
     try {
         const { eventId } = req.params;
         const eventData = req.body;
-
         if (!eventId) {
             return res.status(400).json({
                 success: false,
@@ -162,7 +152,6 @@ export const UpdateWeddingEventController = async (req, res) => {
 export const DeleteWeddingEventController = async (req, res) => {
     try {
         const { eventId } = req.params;
-
         if (!eventId) {
             return res.status(400).json({
                 success: false,
@@ -170,9 +159,7 @@ export const DeleteWeddingEventController = async (req, res) => {
                 message: 'Event ID is required.',
             });
         }
-
         await deleteWeddingEvent(eventId);
-
         return res.status(200).json({
             success: true,
             code: 200,

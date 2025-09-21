@@ -17,7 +17,6 @@ export const loginUser = async (req, res) => {
         }
 
         const user = await findUserByEmail(email);
-
         if (!user) {
             return res.status(404).json({
                 status: false,
@@ -43,7 +42,6 @@ export const loginUser = async (req, res) => {
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
             console.log("Token generated:", token);
-
         } catch (error) {
             console.error("Error generating JWT token:", error);
             return res.status(500).json({
@@ -85,7 +83,6 @@ export const getUserDetails = async (req, res) => {
                 message: 'User ID missing from token'
             });
         }
-
         const customer = await prisma.customer.findUnique({
             where: { userId: userId }
         });
