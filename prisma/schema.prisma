@@ -198,9 +198,14 @@ model RSVP {
   id             Int      @id @default(autoincrement())
   eventId        String
   guestName      String
-  email          String?
-  isInvited      Boolean  @default(false)
-  responseStatus String   @default("PENDING") // ACCEPTED, DECLINED, PENDING
+  phone          String?
+  Gender         String?
+  childCount     Int?     @default(0)
+  alcoholPref    String?  // None, yes, unknown
+  mealPref       String?  // Veg, Non-Veg, Vegan, Gluten-Free
+  plus          Int?     @default(0) // number of additional guests
+  side           String?  // Bride, Groom, Other
+  responseStatus RSVPStatus   @default(PRELISTED) 
   notes          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -209,10 +214,11 @@ model RSVP {
 }
 
 enum RSVPStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
-  WAITLISTED
+  PRELISTED  // Added to the list but not invited yet
+  INVITED     // Officially invited
+  PENDING     // Invited but hasn’t responded
+  ACCEPTED    // Confirmed attendance
+  DECLINED    // Declined the invite
 }
 
 model ServiceCategories {
@@ -221,3 +227,4 @@ model ServiceCategories {
   description    String?
   createdAt      DateTime @default(now())
 }
+

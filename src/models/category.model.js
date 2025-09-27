@@ -4,8 +4,8 @@ import prisma from "../config/db.js";
 export const createServiceCategory = async (categoryData) => {
     try {
         const { name, description } = categoryData;
-        if (!name || !description) {
-            throw new Error("Name and description are required");
+        if (!name) {
+            throw new Error("Category name is required");
         }
 
         const existingCategory = await prisma.serviceCategories.findUnique({
