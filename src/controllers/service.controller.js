@@ -42,7 +42,12 @@ export const getServicesByVendorIdController = async (req, res) => {
                 message: "No services found for this vendor"
             });
         }
-        return res.status(200).json(services);
+        return res.status(200).json({
+            code: 200,
+            success: true,
+            message: "Services fetched successfully",
+            data: services
+        });
     } catch (error) {
         console.error("Error fetching services by vendorId:", error);
         return res.status(500).json({

@@ -48,22 +48,22 @@ model Vendor {
 }
 
 model customer {
-  id        Int      @id @default(autoincrement())
-  userId    String   @unique
-  firstName String
-  lastName  String
-  email     String   @unique
-  address   String?
-  city      String?
-  distric   String?
-  province  String?
-  country   String?
-  contactNo String?
-  image     String?
-  createdAt DateTime @default(now())
+  id             Int           @id @default(autoincrement())
+  userId         String        @unique
+  firstName      String
+  lastName       String
+  email          String        @unique
+  address        String?
+  city           String?
+  distric        String?
+  province       String?
+  country        String?
+  contactNo      String?
+  image          String?
+  createdAt      DateTime      @default(now())
   // Relations
-  weddingEvent WeddingEvent?
-  weddingEventId   String?     @unique
+  weddingEvent   WeddingEvent?
+  weddingEventId String?       @unique
 }
 
 model Otp {
@@ -119,7 +119,7 @@ model ServicePhoto {
 }
 
 model WeddingEvent {
-  id          String             @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   GroomName   String?
   BrideName   String?
@@ -129,41 +129,41 @@ model WeddingEvent {
   location    String?
   Description String?
   GuestCount  Int?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   // Relations
   customer    customer? @relation(fields: [createdBy], references: [userId])
-  createdBy   String?  @unique
+  createdBy   String?   @unique
 
-  agenda      WeddingAgenda[]
-  checklist   WeddingChecklist[]
-  budget      Budget[]
-  guests      RSVP[]
+  agenda    WeddingAgenda[]
+  checklist WeddingChecklist[]
+  budget    Budget[]
+  guests    RSVP[]
 }
 
 model WeddingAgenda {
-  id           Int          @id @default(autoincrement())
-  eventId      String
-  Activity     String
-  Date          DateTime
-  startTime    DateTime?
-  endTime      DateTime?
-  location     String?
-  notes        String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  order        Int?    // Order of the agenda item
+  id        Int       @id @default(autoincrement())
+  eventId   String
+  Activity  String
+  Date      DateTime
+  startTime DateTime?
+  endTime   DateTime?
+  location  String?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  order     Int? // Order of the agenda item
 
   WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
 }
 
 model WeddingChecklist {
-  id           Int                @id @default(autoincrement())
-  eventId      String
-  taskTitle    String
-  description  String?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  id          Int      @id @default(autoincrement())
+  eventId     String
+  taskTitle   String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   subtasks     ChecklistSubtask[]
   WeddingEvent WeddingEvent       @relation(fields: [eventId], references: [id])
@@ -183,48 +183,61 @@ model ChecklistSubtask {
 }
 
 model Budget {
-  id           Int          @id @default(autoincrement())
-  eventId      String
-  category     String // Venue, Catering, Decoration
-  allocated    Float
-  spent        Float        @default(0)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id              Int      @id @default(autoincrement())
+  eventId         String   @unique
+  TotalBudget     Float?
+  AllocatedBudget Float?
+  RemainingBudget Float?
+  SpentBudget     Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+  WeddingEvent WeddingEvent     @relation(fields: [eventId], references: [id])
+  categories   BudgetCategory[]
+}
+
+model BudgetCategory {
+  id              Int      @id @default(autoincrement())
+  categoryName    String   @unique
+  allocatedAmount Float?
+  spentAmount     Float?   @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  Budget          Budget?  @relation(fields: [budgetId], references: [id])
+  budgetId        Int?
 }
 
 model RSVP {
-  id             Int      @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   eventId        String
   guestName      String
   phone          String?
   Gender         String?
-  childCount     Int?     @default(0)
-  alcoholPref    String?  // None, yes, unknown
-  mealPref       String?  // Veg, Non-Veg, Vegan, Gluten-Free
-  plus          Int?     @default(0) // number of additional guests
-  side           String?  // Bride, Groom, Other
-  responseStatus RSVPStatus   @default(PRELISTED) 
+  childCount     Int?       @default(0)
+  alcoholPref    String? // None, yes, unknown
+  mealPref       String? // Veg, Non-Veg, Vegan, Gluten-Free
+  plus           Int?       @default(0) // number of additional guests
+  side           String? // Bride, Groom, Other
+  responseStatus RSVPStatus @default(PRELISTED)
   notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
 }
 
 enum RSVPStatus {
-  PRELISTED  // Added to the list but not invited yet
-  INVITED     // Officially invited
-  PENDING     // Invited but hasn’t responded
-  ACCEPTED    // Confirmed attendance
-  DECLINED    // Declined the invite
+  PRELISTED // Added to the list but not invited yet
+  INVITED // Officially invited
+  PENDING // Invited but hasn’t responded
+  ACCEPTED // Confirmed attendance
+  DECLINED // Declined the invite
 }
 
 model ServiceCategories {
-  id             Int      @id @default(autoincrement())
-  name           String   @unique
-  description    String?
-  createdAt      DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
 }
-
