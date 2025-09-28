@@ -53,7 +53,8 @@ export const getServicesByVendorIdController = async (req, res) => {
         return res.status(500).json({
             code: 500,
             success: false,
-            message: "Failed to fetch services", error: error.message
+            message: "Failed to fetch services", 
+            error: error.message
         });
     }
 };

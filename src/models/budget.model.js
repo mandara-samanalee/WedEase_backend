@@ -67,7 +67,7 @@ export const getBudgetByEventIdModel = async (eventId) => {
         return GetDetails;
     } catch (error) {
         console.error("Error in Model function:", error);
-        throw new Error("Failed to get budget by event");
+        throw new Error("Failed to get budget by eventId");
     }
 };
 

@@ -10,6 +10,7 @@ import eventRoutes from "./event.routes.js";
 import budgetRoutes from "./budget.routes.js";
 import rsvpRoutes from "./rsvp.routes.js";
 import categoryRoutes from "./category.routes.js";
+import checklistRoutes from "./checklist.routes.js";
 
 const router = express.Router();
 
@@ -23,5 +24,6 @@ router.use('/event', eventRoutes);
 router.use('/budget',  budgetRoutes);
 router.use('/rsvp', rsvpRoutes);
 router.use('/category', categoryRoutes);
+router.use('/checklist', checklistRoutes);
 
 export default router;
