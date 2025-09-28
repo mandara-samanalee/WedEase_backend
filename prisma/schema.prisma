@@ -145,7 +145,6 @@ model WeddingAgenda {
   id        Int       @id @default(autoincrement())
   eventId   String
   Activity  String
-  Date      DateTime
   startTime DateTime?
   endTime   DateTime?
   location  String?
@@ -173,7 +172,7 @@ model ChecklistSubtask {
   id          Int      @id @default(autoincrement())
   checklistId Int
   subtask     String
-  status      String   @default("todo") //to-do, in-progress, done
+  status      String   @default("todo") //to-do, in_progress, done
   assignedTo  String?
   bucket      String   @default("6m")
   createdAt   DateTime @default(now())
