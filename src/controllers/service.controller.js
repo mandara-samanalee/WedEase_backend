@@ -1,4 +1,8 @@
-import { createServiceModel, getServicesByVendorId } from "../models/service.model.js";
+import { 
+    createServiceModel, 
+    getServicesByVendorId,
+    updateServiceStatus
+} from "../models/service.model.js";
 
 // Controller to handle service creation
 export const createServiceController = async (req, res) => {
@@ -57,4 +61,44 @@ export const getServicesByVendorIdController = async (req, res) => {
             error: error.message
         });
     }
+};
+
+
+// Change service status
+export const changeServiceStatusController = async (req, res) => {
+  try {
+    const { serviceId, isActive } = req.body;
+
+    if (!serviceId) {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "serviceId is required",
+      });
+    }
+
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "isActive must be true or false",
+      });
+    }
+
+    const updatedService = await updateServiceStatus(serviceId, isActive);
+    return res.status(200).json({
+      code: 200,
+      success: true,
+      message: `Service status updated to ${isActive ? "active" : "inactive"}`,
+      data: updatedService,
+    });
+  } catch (error) {
+    console.error("Error updating service status:", error);
+    return res.status(500).json({
+      code: 500,
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
 };

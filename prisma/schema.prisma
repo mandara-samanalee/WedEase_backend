@@ -82,6 +82,7 @@ model Service {
   category    String
   description String?
   capacity    String?
+  isActive     Boolean  @default(true) // active, inactive
 
   // Location
   latitude  Float?

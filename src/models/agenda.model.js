@@ -56,7 +56,7 @@ export const upsertAgendaItem = async (eventId, items) => {
       for (const item of items) {
         const { id, Activity, startTime, endTime, location, notes, order } = item;
 
-        if (!Activity || !startTime || !endTime) {
+        if (!Activity) {
           throw new Error(`Missing required fields for agenda item: ${Activity || 'Unknown'}`);
         }
 

@@ -106,7 +106,6 @@ export const createServiceModel = async (serviceData, files) => {
             : undefined,
     };
 
-    // Create service
     console.log("Creating service with data:", JSON.stringify(data, null, 2));
     const service = await prisma.service.create({
         data,
@@ -131,3 +130,25 @@ export async function getServicesByVendorId(vendorId) {
         throw new Error("Error fetching services by vendorId: " + error.message);
     }
 }
+
+
+// Update service status (active/inactive)
+export const updateServiceStatus = async (serviceId, isActive) => {
+    try {
+        const service = await prisma.service.findUnique({
+            where: { serviceId: serviceId },
+        });
+        if (!service) {
+            throw new Error("Service not found");
+        }
+
+        const updatedService = await prisma.service.update({
+            where: { serviceId: serviceId },
+            data: { isActive: isActive },
+        });
+        return updatedService;
+    } catch (error) {
+        throw new Error("Error updating service status: " + error.message);
+    }
+};
+
