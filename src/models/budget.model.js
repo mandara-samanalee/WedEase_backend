@@ -32,9 +32,11 @@ export const saveOrUpdateBudgetModel = async (eventId, TotalBudget, categories) 
             for (const cat of categories) {
                 await prisma.budgetCategory.upsert({
                     where: {
+                        categoryName_budgetId: {
                         categoryName: cat.categoryName,
                         budgetId: budget.id,
                     },
+                },
                     update: {
                         allocatedAmount: cat.allocatedAmount,
                         spentAmount: cat.spentAmount,

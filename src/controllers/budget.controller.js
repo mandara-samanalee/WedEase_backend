@@ -51,10 +51,11 @@ export const getBudgetByEventIdController = async (req, res) => {
         const budget = await getBudgetByEventIdModel(eventId);
 
         if (!budget || Object.keys(budget).length === 0) {
-            return res.status(404).json({ 
-                code: 404,
-                success: false, 
-                message: "Budget details not found" 
+            return res.status(200).json({ 
+                code: 200,
+                success: true, 
+                message: "Budget details not found",
+                data: null
             });
         }
 

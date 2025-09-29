@@ -201,14 +201,16 @@ model Budget {
 
 model BudgetCategory {
   id              Int      @id @default(autoincrement())
-  categoryName    String   @unique
+  categoryName    String   
   allocatedAmount Float?
   spentAmount     Float?   @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
-  Budget          Budget?  @relation(fields: [budgetId], references: [id])
-  budgetId        Int?
+  Budget          Budget  @relation(fields: [budgetId], references: [id])
+  budgetId        Int
+
+  @@unique([categoryName, budgetId])
 }
 
 model RSVP {
