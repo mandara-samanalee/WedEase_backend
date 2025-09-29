@@ -10,7 +10,7 @@ export function generateServiceId(vendorId) {
 }
 
 // create new service
-export const createServiceModel = async (serviceData, files) => {
+export const createService = async (serviceData, files) => {
     const {
         vendorId,
         serviceName,
@@ -152,3 +152,38 @@ export const updateServiceStatus = async (serviceId, isActive) => {
     }
 };
 
+
+// Get all services 
+export const getAllServices = async () => {
+    try {
+        const services = await prisma.service.findMany({
+            where: {  isActive: true },
+            include: {
+                packages: true,
+                photos: true,
+                vendor: true,
+            },
+        });
+        return services;
+    } catch (error) {
+        throw new Error("Error fetching all services: " + error.message);
+    }
+};
+
+
+// Get service by serviceId
+export const getServiceById = async (serviceId) => {
+    try {
+        const service = await prisma.service.findUnique({
+            where: { serviceId },
+            include: {
+                packages: true,
+                photos: true,
+                vendor: true,
+            },
+        });
+        return service;
+    } catch (error) {
+        throw new Error("Error fetching service by serviceId: " + error.message);
+    }
+};

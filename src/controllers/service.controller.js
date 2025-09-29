@@ -1,13 +1,15 @@
 import { 
-    createServiceModel, 
+    createService, 
     getServicesByVendorId,
-    updateServiceStatus
+    updateServiceStatus,
+    getAllServices,
+    getServiceById
 } from "../models/service.model.js";
 
 // Controller to handle service creation
 export const createServiceController = async (req, res) => {
     try {
-        const service = await createServiceModel(req.body, req.files);
+        const service = await createService(req.body, req.files);
         return res.status(201).json({
             code: 201,
             success: true,
@@ -101,4 +103,62 @@ export const changeServiceStatusController = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+// get all services
+export const getAllServicesController = async (req, res) => {
+    try {
+        const services = await getAllServices();
+
+        return res.status(200).json({
+            code: 200,
+            success: true, 
+            message: "All services fetched successfully",
+            data: services
+        });
+    } catch (error) {
+        console.error("Error fetching all services:", error);
+        return res.status(500).json({
+            code: 500,
+            success: false,
+            message: "Failed to fetch services",
+            error: error.message
+        });
+    }
+};
+
+// Get service by serviceId controller
+export const getServiceByIdController = async (req, res) => {
+    try {
+        const { serviceId } = req.body;
+        if (!serviceId) {
+            return res.status(400).json({
+                code: 400,
+                success: false,
+                message: "serviceId is required"
+            });
+        }
+        const service = await getServiceById(serviceId);
+        if (!service) {
+            return res.status(404).json({
+                code: 404,
+                success: false,
+                message: "Service not found"
+            });
+        }
+        return res.status(200).json({
+            code: 200,
+            success: true,
+            message: "Service fetched successfully",
+            data: service
+        });
+    } catch (error) {
+        console.error("Error fetching service by serviceId:", error);
+        return res.status(500).json({
+            code: 500,
+            success: false,
+            message: "Failed to fetch service",
+            error: error.message
+        });
+    }
 };

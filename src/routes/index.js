@@ -12,6 +12,7 @@ import rsvpRoutes from "./rsvp.routes.js";
 import categoryRoutes from "./category.routes.js";
 import checklistRoutes from "./checklist.routes.js";
 import agendaRoutes from "./agenda.routes.js";
+import bookingRoutes from "./booking.routes.js";
 
 const router = express.Router();
 
@@ -27,5 +28,6 @@ router.use('/rsvp', rsvpRoutes);
 router.use('/category', categoryRoutes);
 router.use('/checklist', checklistRoutes);
 router.use('/agenda', agendaRoutes);
+router.use('/booking', bookingRoutes);
 
 export default router;

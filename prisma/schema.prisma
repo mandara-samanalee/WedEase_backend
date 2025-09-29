@@ -64,6 +64,8 @@ model customer {
   // Relations
   weddingEvent   WeddingEvent?
   weddingEventId String?       @unique
+
+  bookings Booking[] 
 }
 
 model Otp {
@@ -82,7 +84,7 @@ model Service {
   category    String
   description String?
   capacity    String?
-  isActive     Boolean  @default(true) // active, inactive
+  isActive     Boolean  @default(true) 
 
   // Location
   latitude  Float?
@@ -98,6 +100,7 @@ model Service {
   vendor   Vendor           @relation(fields: [vendorId], references: [userId])
   packages ServicePackage[]
   photos   ServicePhoto[]
+  bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -240,4 +243,30 @@ model ServiceCategories {
   name        String   @unique
   description String?
   createdAt   DateTime @default(now())
+}
+
+
+enum BookingStatus {
+  INTERESTED
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id          String       @id @default(cuid())
+  serviceId   String
+  customerId  String
+  status      BookingStatus @default(INTERESTED)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  confirmedAt DateTime?    // When booking was confirmed by vendor
+  cancelledAt DateTime?    // When booking was cancelled
+  
+  // Relations
+  service     Service      @relation(fields: [serviceId], references: [serviceId])
+  customer    customer     @relation(fields: [customerId], references: [userId])
+  
+  @@unique([serviceId, customerId, status]) // Prevent duplicate interested status
 }
