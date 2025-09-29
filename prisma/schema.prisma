@@ -65,7 +65,8 @@ model customer {
   weddingEvent   WeddingEvent?
   weddingEventId String?       @unique
 
-  bookings Booking[] 
+  bookings Booking[]
+  reviews  Review[] 
 }
 
 model Otp {
@@ -101,6 +102,7 @@ model Service {
   packages ServicePackage[]
   photos   ServicePhoto[]
   bookings Booking[]
+  reviews  Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -271,4 +273,23 @@ model Booking {
   customer    customer     @relation(fields: [customerId], references: [userId])
   
   @@unique([serviceId, customerId, status]) // Prevent duplicate interested status
+  review  Review? // one review per booking
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  serviceId  String
+  customerId String
+  bookingId  String  @unique  
+  rating       Int      // 1 to 5
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  service    Service  @relation(fields: [serviceId], references: [serviceId])
+  customer   customer @relation(fields: [customerId], references: [userId])
+  booking   Booking @relation(fields: [bookingId], references: [id])
+
+  @@unique([serviceId, customerId]) // One review per customer per service
 }
