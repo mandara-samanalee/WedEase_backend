@@ -2,7 +2,9 @@ import express from 'express';
 import {
     createOrUpdateBookingController,
     getBookingsByCustomerIdController,
-    updateBookingStatusController
+    updateBookingStatusController,
+    deleteBookingController,
+    getVendorBookingsController
 } from '../controllers/booking.controller.js';
 
 const router = express.Router();
@@ -15,5 +17,10 @@ router.get('/customer/:customerId', getBookingsByCustomerIdController);
 
 // Update booking status
 router.put('/update-status', updateBookingStatusController);
+
+// Delete booking by ID
+router.delete('/delete/:id', deleteBookingController);
+
+router.get('/vendor/:vendorId', getVendorBookingsController);
 
 export default router;

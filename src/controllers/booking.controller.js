@@ -1,7 +1,9 @@
-import { 
-    createOrUpdateBooking, 
-    getBookingsByCustomerId, 
-    updateBookingStatus 
+import {
+    createOrUpdateBooking,
+    getBookingsByCustomerId,
+    updateBookingStatus,
+    deleteBookingById,
+    getVendorBookings
 } from '../models/booking.model.js';
 
 // Create or update booking controller
@@ -120,4 +122,67 @@ export const updateBookingStatusController = async (req, res) => {
             error: error.message
         });
     }
+};
+
+
+// delete booking
+export const deleteBookingController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({
+                code: 400,
+                success: false,
+                message: "Booking ID is required",
+            });
+        }
+
+        const deletedBooking = await deleteBookingById(id);
+
+        return res.status(200).json({
+            success: true,
+            message: "Booking deleted successfully",
+            data: deletedBooking,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            code: 500,
+            success: false,
+            message: "Failed to delete booking",
+            error: error.message,
+        });
+    }
+};
+
+
+// get all bookings by vendorId
+export const getVendorBookingsController = async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    const services = await getVendorBookings(vendorId);
+
+    if (!services || services.length === 0) {
+      return res.status(404).json({
+        code: 404,
+        success: false,
+        message: "No services or bookings found for this vendor",
+      });
+    }
+
+    return res.status(200).json({
+      code: 200,
+      success: true,
+      message: "Vendor bookings fetched successfully",
+      data: services,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      code: 400,
+      success: false,
+      message:" Failed to fetch vendor bookings", 
+      error: error.message,
+    });
+  }
 };

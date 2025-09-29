@@ -79,3 +79,52 @@ export const updateBookingStatus = async (bookingId, status) => {
         throw new Error("Error updating booking status: " + error.message);
     }
 };
+
+
+// Delete booking by ID
+export const deleteBookingById = async (bookingId) => {
+    try {
+        const booking = await prisma.booking.findUnique({
+            where: { id: bookingId },
+        });
+
+        if (!booking) {
+            throw new Error("Booking not found");
+        }
+
+        // Restrict delete if status is CONFIRMED or COMPLETED
+        if (booking.status === "CONFIRMED" || booking.status === "COMPLETED") {
+            throw new Error("Cannot delete booking with confirmed or completed status");
+        }
+
+        // Delete booking
+        return await prisma.booking.delete({
+            where: { id: bookingId },
+        });
+    } catch (error) {
+        throw new Error("Error deleting booking: " + error.message);
+    }
+};
+
+// Get bookings by vendorId
+export const getVendorBookings = async (vendorId) => {
+    try {
+        const bookingDetails = await prisma.service.findMany({
+            where: { vendorId },
+            include: {
+                bookings: {
+                    include: {
+                        customer: true
+                    },
+                },
+                packages: true,
+                photos: true,
+            },
+            orderBy: { createdAt: 'asc' }
+        });
+        return bookingDetails;
+    } catch (error) {
+        throw new Error("Error fetching bookings by vendorId: " + error.message);
+    }
+};
+
