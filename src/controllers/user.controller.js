@@ -3,7 +3,8 @@ import {
     isSamePassword, 
     changePassword,  
     findUserByEmail,
-    deleteUserAccountModel
+    deleteUserAccountModel,
+    updateUserStatusModel
 } from '../models/user.model.js';
 
 // Controller function for Forgot password 
@@ -148,3 +149,35 @@ export const getUserByEmailController = async (req, res) => {
         });
     }
 }
+
+
+// update user active/inactive status
+export const updateUserStatusController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isActive } = req.body; // true or false
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: 'isActive must be a boolean value',
+      });
+    }
+
+    const updatedUser = await updateUserStatusModel(userId, isActive);
+
+    return res.status(200).json({
+      code: 200,
+      success: true,
+      message: `User has been ${isActive ? 'activated' : 'deactivated'} successfully`,
+      data: updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      success: false,
+      message: error.message || 'Failed to update user status',
+    });
+  }
+};

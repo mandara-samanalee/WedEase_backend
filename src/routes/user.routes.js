@@ -2,7 +2,8 @@ import {
     forgotPassword, 
     changePasswordController,
     deleteUserAccountController,
-    getUserByEmailController
+    getUserByEmailController,
+    updateUserStatusController
 } from '../controllers/user.controller.js';
 import express from 'express';
 
@@ -150,5 +151,7 @@ router.delete('/delete-account/:userId', deleteUserAccountController );
  */
 router.get('/get-byemail/:email', getUserByEmailController);
 
+// make user active/inactive
+router.put('/status/:userId', updateUserStatusController);
 
 export default router;

@@ -2,7 +2,9 @@ import express from 'express';
 import { 
     createUserController, 
     updateCustomerProfileController,
-    GetCustomerDetailsController
+    GetCustomerDetailsController,
+    getAllCustomerDetailsController,
+    deleteCustomerAccountController,
 } from "../controllers/customer.controller.js";
 import { upload } from '../middleware/upload.js';
 
@@ -96,5 +98,10 @@ router.put('/profile/:userId', upload.single('image'), updateCustomerProfileCont
 
 
 router.get('/getdetails/:userId', GetCustomerDetailsController);
+
+router.get('/all-customer-details', getAllCustomerDetailsController);
+
+router.delete('/delete-account/:userId', deleteCustomerAccountController);
+
 
 export default router;

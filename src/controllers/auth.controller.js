@@ -16,59 +16,85 @@ export const loginUser = async (req, res) => {
             })
         }
 
-        const user = await findUserByEmail(email);
-        if (!user) {
-            return res.status(404).json({
-                status: false,
-                code: 404,
-                message: "User not found"
-            });
-        }
+        // Check if admin credentials
+        const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+        console.log("Admin credentials from env:", ADMIN_EMAIL, ADMIN_PASSWORD);
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({
-                status: false,
-                code: 401,
-                message: "Invalid credentials"
-            })
-        }
-
-        // Generate JWT token
-        let token;
-        try {
-            token = jwt.sign(
-                { userId: user.userId, email: user.email, role: user.role }, process.env.JWT_SECRET_KEY,
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+            const token = jwt.sign(
+                { email: ADMIN_EMAIL, role: "ADMIN" },
+                process.env.JWT_SECRET_KEY,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
-            console.log("Token generated:", token);
-        } catch (error) {
-            console.error("Error generating JWT token:", error);
-            return res.status(500).json({
-                status: false,
-                code: 500,
-                message: "Failed to generate JWT token"
-            });
-        }
 
-        return res.status(200).json({
-            status: true,
-            code: 200,
-            message: "Login successful",
-            user: {
-                userId: user.userId,
-                email: user.email,
-                role: user.role,
-                token: token
-            }
+            return res.status(200).json({
+                status: true,
+                code: 200,
+                message: "Admin login successful",
+                user: {
+                    userId: "ADMIN001",
+                    email,
+                    role: "ADMIN",
+                    token,
+                },
+            });
+        } 
+
+        // Otherwise, normal user login flow
+        const user = await findUserByEmail(email);
+    if (!user) {
+        return res.status(404).json({
+            status: false,
+            code: 404,
+            message: "User not found"
+        });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(401).json({
+            status: false,
+            code: 401,
+            message: "Invalid credentials"
         })
+    }
+
+    // Generate JWT token
+    let token;
+    try {
+        token = jwt.sign(
+            { userId: user.userId, email: user.email, role: user.role }, process.env.JWT_SECRET_KEY,
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
+        console.log("Token generated:", token);
     } catch (error) {
+        console.error("Error generating JWT token:", error);
         return res.status(500).json({
             status: false,
             code: 500,
-            message: "Internal server error"
+            message: "Failed to generate JWT token"
         });
     }
+
+    return res.status(200).json({
+        status: true,
+        code: 200,
+        message: "Login successful",
+        user: {
+            userId: user.userId,
+            email: user.email,
+            role: user.role,
+            token: token
+        }
+    })
+} catch (error) {
+    return res.status(500).json({
+        status: false,
+        code: 500,
+        message: "Internal server error"
+    });
+}
 }
 
 // get user details by userId

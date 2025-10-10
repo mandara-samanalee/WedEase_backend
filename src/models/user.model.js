@@ -105,6 +105,11 @@ export const deleteUserAccountModel = async (userId) => {
     try {
         const customer = await prisma.customer.findUnique({ where: { userId } });
         const vendor = await prisma.vendor.findUnique({ where: { userId } });
+        const admin = await prisma.admin.findUnique({ where: { userId } });
+
+        if (admin) {
+            throw new Error('Admin accounts cannot be deleted.');
+        }
 
         if (!customer && !vendor) {
             throw new Error('No customer or vendor profile found for this user.');
@@ -168,3 +173,18 @@ export const findUserData = async (email) => {
         throw new Error("Failed to find user by email");
     }
 }
+
+
+// update user status (active/inactive)
+export const updateUserStatusModel = async (userId, isActive) => {
+  try {
+    const user = await prisma.user.update({
+      where: { userId },
+      data: { isActive },
+    });
+
+    return user;
+  } catch (error) {
+    throw new Error(`Error updating user status: ${error.message}`);
+  }
+};

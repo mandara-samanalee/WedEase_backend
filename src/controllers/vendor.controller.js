@@ -1,7 +1,9 @@
 import { 
     createVendorModel, 
     updateVendorProfileModel,
-    GetVendorDetailsModel 
+    GetVendorDetailsModel,
+    getAllVendorsDetailsModel,
+    deleteVendorModel
 } from "../models/vendor.model.js";
 import { findUserByEmail } from "../models/user.model.js";
 import bcrypt from 'bcrypt';
@@ -156,4 +158,46 @@ export const GetVendorDetailsController = async (req, res) => {
             data: null,
         });
     };
+};
+
+
+// get all vendors details
+export const getAllVendorsDetailsController = async (req, res) => {
+  try {
+    const data = await getAllVendorsDetailsModel();
+    return res.status(200).json({
+      code: 200,
+      success: true,
+      message: 'Vendors with services retrieved successfully',
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      success: false,
+      message: error.message || 'Failed to fetch vendors with services',
+    });
+  }
+};
+
+
+// delete account
+export const deleteVendorController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await deleteVendorModel(userId);
+
+    return res.status(200).json({
+      code: 200,
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      success: false,
+      message: error.message || 'Failed to delete vendor',
+    });
+  }
 };

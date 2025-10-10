@@ -20,12 +20,27 @@ model User {
   password  String
   role      String
   createdAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+
+  notifications Notification[]
 }
 
 enum UserRole {
   ADMIN
   VENDOR
   CUSTOMER
+}
+
+model Admin {
+  id          Int      @id @default(autoincrement())
+  userId      String   @unique
+  firstName   String
+  lastName    String
+  email       String   @unique
+  contactNo   String?
+  designation String?
+  image       String?
+  createdAt   DateTime @default(now())
 }
 
 model Vendor {
@@ -66,7 +81,7 @@ model customer {
   weddingEventId String?       @unique
 
   bookings Booking[]
-  reviews  Review[] 
+  reviews  Review[]
 }
 
 model Otp {
@@ -85,7 +100,7 @@ model Service {
   category    String
   description String?
   capacity    String?
-  isActive     Boolean  @default(true) 
+  isActive    Boolean @default(true)
 
   // Location
   latitude  Float?
@@ -203,14 +218,14 @@ model Budget {
 
 model BudgetCategory {
   id              Int      @id @default(autoincrement())
-  categoryName    String   
+  categoryName    String
   allocatedAmount Float?
   spentAmount     Float?   @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
-  Budget          Budget  @relation(fields: [budgetId], references: [id])
-  budgetId        Int
+
+  Budget   Budget @relation(fields: [budgetId], references: [id])
+  budgetId Int
 
   @@unique([categoryName, budgetId])
 }
@@ -249,7 +264,6 @@ model ServiceCategories {
   createdAt   DateTime @default(now())
 }
 
-
 enum BookingStatus {
   INTERESTED
   PENDING
@@ -259,37 +273,52 @@ enum BookingStatus {
 }
 
 model Booking {
-  id          String       @id @default(cuid())
+  id          String        @id @default(cuid())
   serviceId   String
   customerId  String
   status      BookingStatus @default(INTERESTED)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  confirmedAt DateTime?    // When booking was confirmed by vendor
-  cancelledAt DateTime?    // When booking was cancelled
-  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  confirmedAt DateTime? // When booking was confirmed by vendor
+  cancelledAt DateTime? // When booking was cancelled
+
   // Relations
-  service     Service      @relation(fields: [serviceId], references: [serviceId])
-  customer    customer     @relation(fields: [customerId], references: [userId])
-  
+  service       Service        @relation(fields: [serviceId], references: [serviceId])
+  customer      customer       @relation(fields: [customerId], references: [userId])
+  review        Review? // one review per booking
+  notifications Notification[]
+
   @@unique([serviceId, customerId, status]) // Prevent duplicate interested status
-  review  Review? // one review per booking
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   serviceId  String
   customerId String
-  bookingId  String  @unique  
-  rating       Int      // 1 to 5
+  bookingId  String   @unique
+  rating     Int // 1 to 5
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   // Relations
-  service    Service  @relation(fields: [serviceId], references: [serviceId])
-  customer   customer @relation(fields: [customerId], references: [userId])
-  booking   Booking @relation(fields: [bookingId], references: [id])
+  service  Service  @relation(fields: [serviceId], references: [serviceId])
+  customer customer @relation(fields: [customerId], references: [userId])
+  booking  Booking  @relation(fields: [bookingId], references: [id])
 
   @@unique([serviceId, customerId]) // One review per customer per service
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  bookingId String?
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [userId])
+  booking Booking? @relation(fields: [bookingId], references: [id])
 }

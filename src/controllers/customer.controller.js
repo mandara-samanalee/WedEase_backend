@@ -1,7 +1,9 @@
 import {
     createUserModel,
     updateCustomerProfileModel,
-    GetCustomerDetailsModel
+    GetCustomerDetailsModel,
+    getAllCustomerDetailsModel,
+    deleteCustomerAccountModel,
 } from "../models/customer.model.js";
 import { findUserByEmail } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
@@ -154,3 +156,46 @@ export const GetCustomerDetailsController = async (req, res) => {
         });
     }
 }
+
+
+// Get all customers with full details
+export const getAllCustomerDetailsController = async (req, res) => {
+  try {
+    const data = await getAllCustomerDetailsModel();
+
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: 'Customer details retrieved successfully',
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      success: false,
+      message: error.message || 'Error fetching customer details',
+    });
+  }
+};
+
+// Delete a customer account
+export const deleteCustomerAccountController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await deleteCustomerAccountModel(userId);
+
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      success: false,
+      message: error.message || 'Error deleting customer account',
+    });
+  }
+};
+

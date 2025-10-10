@@ -14,6 +14,7 @@ import checklistRoutes from "./checklist.routes.js";
 import agendaRoutes from "./agenda.routes.js";
 import bookingRoutes from "./booking.routes.js";
 import reviewRoutes from "./review.routes.js";
+import adminRoutes from "./admin.routes.js";
 
 const router = express.Router();
 
@@ -31,5 +32,6 @@ router.use('/checklist', checklistRoutes);
 router.use('/agenda', agendaRoutes);
 router.use('/booking', bookingRoutes);
 router.use('/review', reviewRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;
