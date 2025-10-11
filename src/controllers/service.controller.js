@@ -1,9 +1,10 @@
-import { 
-    createService, 
+import {
+    createService,
     getServicesByVendorId,
     updateServiceStatus,
     getAllServices,
-    getServiceById
+    getServiceById,
+    deleteServiceModel
 } from "../models/service.model.js";
 
 // Controller to handle service creation
@@ -59,7 +60,7 @@ export const getServicesByVendorIdController = async (req, res) => {
         return res.status(500).json({
             code: 500,
             success: false,
-            message: "Failed to fetch services", 
+            message: "Failed to fetch services",
             error: error.message
         });
     }
@@ -68,41 +69,41 @@ export const getServicesByVendorIdController = async (req, res) => {
 
 // Change service status
 export const changeServiceStatusController = async (req, res) => {
-  try {
-    const { serviceId, isActive } = req.body;
+    try {
+        const { serviceId, isActive } = req.body;
 
-    if (!serviceId) {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        message: "serviceId is required",
-      });
+        if (!serviceId) {
+            return res.status(400).json({
+                code: 400,
+                success: false,
+                message: "serviceId is required",
+            });
+        }
+
+        if (typeof isActive !== "boolean") {
+            return res.status(400).json({
+                code: 400,
+                success: false,
+                message: "isActive must be true or false",
+            });
+        }
+
+        const updatedService = await updateServiceStatus(serviceId, isActive);
+        return res.status(200).json({
+            code: 200,
+            success: true,
+            message: `Service status updated to ${isActive ? "active" : "inactive"}`,
+            data: updatedService,
+        });
+    } catch (error) {
+        console.error("Error updating service status:", error);
+        return res.status(500).json({
+            code: 500,
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        });
     }
-
-    if (typeof isActive !== "boolean") {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        message: "isActive must be true or false",
-      });
-    }
-
-    const updatedService = await updateServiceStatus(serviceId, isActive);
-    return res.status(200).json({
-      code: 200,
-      success: true,
-      message: `Service status updated to ${isActive ? "active" : "inactive"}`,
-      data: updatedService,
-    });
-  } catch (error) {
-    console.error("Error updating service status:", error);
-    return res.status(500).json({
-      code: 500,
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
 };
 
 // get all services
@@ -112,7 +113,7 @@ export const getAllServicesController = async (req, res) => {
 
         return res.status(200).json({
             code: 200,
-            success: true, 
+            success: true,
             message: "All services fetched successfully",
             data: services
         });
@@ -159,6 +160,44 @@ export const getServiceByIdController = async (req, res) => {
             success: false,
             message: "Failed to fetch service",
             error: error.message
+        });
+    }
+};
+
+
+// Delete service controller
+export const deleteServiceController = async (req, res) => {
+    try {
+        const { serviceId } = req.body;
+
+        if (!serviceId) {
+            return res.status(400).json({
+                status: false,
+                code: 400,
+                message: "Service ID is required in the request body",
+            });
+        }
+
+        const result = await deleteServiceModel(serviceId);
+
+        if (!result.status) {
+            return res.status(404).json({
+                status: false,
+                code: 404,
+                message: result.data,
+            });
+        }
+        return res.status(200).json({
+            status: true,
+            code: 200,
+            message: result.data
+        });
+    } catch (error) {
+        console.error("Error in deleteServiceController:", error);
+        return res.status(500).json({
+            status: false,
+            code: 500,
+            message: "Internal server error",
         });
     }
 };

@@ -187,3 +187,48 @@ export const getServiceById = async (serviceId) => {
         throw new Error("Error fetching service by serviceId: " + error.message);
     }
 };
+
+
+// delete service by serviceId
+export const deleteServiceModel = async (serviceId) => {
+  try {
+    // Check if service exists
+    const existingService = await prisma.service.findUnique({
+      where: { serviceId },
+    });
+
+    if (!existingService) {
+      return { 
+        status: false, 
+        message: "Service not found" 
+    };
+}
+
+    // Delete related data in a transaction
+    await prisma.$transaction([
+      prisma.servicePhoto.deleteMany({
+        where: { serviceId },
+      }),
+      prisma.servicePackage.deleteMany({
+        where: { serviceId },
+      }),
+      prisma.review.deleteMany({
+        where: { serviceId },
+      }),
+      prisma.booking.deleteMany({
+        where: { serviceId },
+      }),
+      prisma.service.delete({
+        where: { serviceId },
+      }),
+    ]);
+
+    return { 
+        status: true, 
+        message: "Service and related data deleted successfully" 
+    };
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    throw new Error("Failed to delete service and related data");
+  }
+};

@@ -177,3 +177,138 @@ export const deleteCustomerAccountModel = async (userId) => {
     throw new Error(`Error deleting customer account: ${error.message}`);
   }
 };
+
+
+// Get wedding dashboard data by userId
+export const getWeddingDashboardByUserIdModel = async (userId) => {
+  try {
+    // Get the event created by this user
+    const event = await prisma.weddingEvent.findUnique({
+      where: { createdBy: userId },
+      include: {
+        guests: true,
+        checklist: { 
+          include: { subtasks: true } 
+        },
+        agenda: true,
+        budget: {
+          include: { categories: true }
+        },
+      },
+    });
+
+    // If no event exists for this user
+    if (!event) {
+      return {
+        eventDetails: null,
+        totalGuests: null,
+        guestResponseCounts: null,
+        taskCompletedPercentage: null,
+        bookedServicesSummary: null,
+        budgetSummary: null,
+        timelineTaskCount: null,
+        completedChecklistTasks: null,
+      };
+    }
+
+    //  1. Total Guest Count
+    const totalGuests = event.guests?.length || 0;
+
+    // 2️. Guest Responses Summary
+    const guestResponseCounts = event.guests?.length
+      ? {
+          confirmed: event.guests.filter(g => g.responseStatus === "ACCEPTED").length,
+          pending: event.guests.filter(g => g.responseStatus === "PENDING").length,
+          declined: event.guests.filter(g => g.responseStatus === "DECLINED").length,
+          invited: event.guests.filter(g => g.responseStatus === "INVITED").length,
+          prelisted: event.guests.filter(g => g.responseStatus === "PRELISTED").length,
+        }
+      : null;
+
+    // 3️ Checklist Progress
+    const allSubtasks = event.checklist.flatMap(c => c.subtasks);
+    const totalSubtasks = allSubtasks.length;
+    const completedSubtasks = allSubtasks.filter(s => s.status === "done").length;
+    const taskCompletedPercentage =
+      totalSubtasks > 0 ? ((completedSubtasks / totalSubtasks) * 100).toFixed(2) : null;
+
+    // 4. Booked Services Summary
+    const bookings = await prisma.booking.findMany({
+      where: { customerId: userId },
+      include: { service: true },
+    });
+
+    const bookedServicesSummary = bookings.length
+      ? {
+          totalBookings: bookings.length,
+          accepted: bookings.filter(b => b.status === "ACCEPTED").length,
+          pending: bookings.filter(b => ["INTERESTED", "PENDING"].includes(b.status)).length,
+          completed: bookings.filter(b => b.status === "COMPLETED").length,
+        }
+      : null;
+
+    // 5️ Budget Summary
+    const budget = event.budget?.[0] || null;
+    const budgetSummary = budget
+      ? (() => {
+          const totalAllocated = budget.categories.reduce(
+            (sum, c) => sum + (c.allocatedAmount || 0),
+            0
+          );
+          const totalSpent = budget.categories.reduce(
+            (sum, c) => sum + (c.spentAmount || 0),
+            0
+          );
+          return {
+            totalBudget: budget.TotalBudget,
+            allocatedBudget: totalAllocated,
+            spentBudget: totalSpent,
+            remainingBudget:
+              budget.TotalBudget != null ? budget.TotalBudget - totalSpent : null,
+          };
+        })()
+      : null;
+
+    // 6 Event Details
+    const eventDetails = event
+      ? {
+          title: event.title,
+          groomName: event.GroomName,
+          brideName: event.BrideName,
+          date: event.date,
+          startTime: event.startTime,
+          endTime: event.endTime,
+          location: event.location,
+          description: event.Description,
+          guestCount: event.GuestCount,
+        }
+      : null;
+
+    // 7️ Timeline Task Count
+    const timelineTaskCount = event.agenda?.length || null;
+
+    // 8️ Completed Checklist Tasks
+    const completedChecklistTasks =
+      event.checklist?.length > 0
+        ? event.checklist.filter(c =>
+            c.subtasks.length > 0 && c.subtasks.every(s => s.status === "done")
+          ).length
+        : null;
+
+    // Return final structured summary
+    return {
+      eventDetails,
+      totalGuests,
+      guestResponseCounts,
+      taskCompletedPercentage,
+      bookedServicesSummary,
+      budgetSummary,
+      timelineTaskCount,
+      completedChecklistTasks,
+    };
+  } catch (error) {
+    console.error("Model Error (getWeddingDashboardByUserIdModel):", error);
+    throw error;
+  }
+};
+

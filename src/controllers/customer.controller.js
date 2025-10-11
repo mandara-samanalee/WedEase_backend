@@ -4,6 +4,7 @@ import {
     GetCustomerDetailsModel,
     getAllCustomerDetailsModel,
     deleteCustomerAccountModel,
+    getWeddingDashboardByUserIdModel
 } from "../models/customer.model.js";
 import { findUserByEmail } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
@@ -198,4 +199,31 @@ export const deleteCustomerAccountController = async (req, res) => {
     });
   }
 };
+
+
+// Get wedding event details for a customer
+export const getWeddingDashboardByUserIdController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const dashboardSummary = await getWeddingDashboardByUserIdModel(userId);
+
+    // Always return 200 even if values are null
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "Wedding dashboard summary fetched successfully",
+      data: dashboardSummary,
+    });
+  } catch (error) {
+    console.error("Controller Error (getWeddingDashboardByUserIdController):", error);
+    res.status(500).json({
+        code: 500,
+        status: false,
+        message: "Internal Server Error", error 
+    });
+  }
+};
+
+
 

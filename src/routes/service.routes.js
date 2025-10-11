@@ -3,7 +3,8 @@ import {
     getServicesByVendorIdController,
     changeServiceStatusController,
     getAllServicesController,
-    getServiceByIdController
+    getServiceByIdController,
+    deleteServiceController
 } from "../controllers/service.controller.js";
 import { upload } from '../middleware/upload.js';
 import express from 'express';
@@ -15,5 +16,6 @@ router.get('/getAll/:vendorId', getServicesByVendorIdController);
 router.put("/status", changeServiceStatusController);
 router.get("/all", getAllServicesController);
 router.post("/get-details", getServiceByIdController);
+router.delete("/delete", deleteServiceController);
 
 export default router;

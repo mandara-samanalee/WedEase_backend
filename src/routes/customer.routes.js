@@ -5,6 +5,7 @@ import {
     GetCustomerDetailsController,
     getAllCustomerDetailsController,
     deleteCustomerAccountController,
+    getWeddingDashboardByUserIdController
 } from "../controllers/customer.controller.js";
 import { upload } from '../middleware/upload.js';
 
@@ -103,5 +104,6 @@ router.get('/all-customer-details', getAllCustomerDetailsController);
 
 router.delete('/delete-account/:userId', deleteCustomerAccountController);
 
+router.get('/get-event-details/:userId', getWeddingDashboardByUserIdController);
 
 export default router;

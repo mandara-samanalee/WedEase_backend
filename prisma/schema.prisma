@@ -78,8 +78,6 @@ model customer {
   createdAt      DateTime      @default(now())
   // Relations
   weddingEvent   WeddingEvent?
-  weddingEventId String?       @unique
-
   bookings Booking[]
   reviews  Review[]
 }
@@ -281,6 +279,7 @@ model Booking {
   updatedAt   DateTime      @updatedAt
   confirmedAt DateTime? // When booking was confirmed by vendor
   cancelledAt DateTime? // When booking was cancelled
+  completedAt  DateTime? // When service was completed
 
   // Relations
   service       Service        @relation(fields: [serviceId], references: [serviceId])

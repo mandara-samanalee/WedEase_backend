@@ -129,7 +129,6 @@ export const updateBookingStatusController = async (req, res) => {
 export const deleteBookingController = async (req, res) => {
     try {
         const { id } = req.params;
-
         if (!id) {
             return res.status(400).json({
                 code: 400,
@@ -139,7 +138,6 @@ export const deleteBookingController = async (req, res) => {
         }
 
         const deletedBooking = await deleteBookingById(id);
-
         return res.status(200).json({
             success: true,
             message: "Booking deleted successfully",

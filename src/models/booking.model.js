@@ -71,7 +71,8 @@ export const updateBookingStatus = async (bookingId, status) => {
                 status,
                 updatedAt: new Date(),
                 ...(status === 'CONFIRMED' && { confirmedAt: new Date() }),
-                ...(status === 'CANCELLED' && { cancelledAt: new Date() })
+                ...(status === 'CANCELLED' && { cancelledAt: new Date() }),
+                ...(status === 'COMPLETED' && { completedAt: new Date() }),
             }
         });
         return booking;
@@ -95,6 +96,17 @@ export const deleteBookingById = async (bookingId) => {
         // Restrict delete if status is CONFIRMED or COMPLETED
         if (booking.status === "CONFIRMED" || booking.status === "COMPLETED") {
             throw new Error("Cannot delete booking with confirmed or completed status");
+        }
+
+        //Delete related review (if exists)
+        const existingReview = await prisma.review.findUnique({
+            where: { bookingId: bookingId },
+        });
+
+        if (existingReview) {
+            await prisma.review.delete({
+                where: { bookingId: bookingId },
+            });
         }
 
         // Delete booking
