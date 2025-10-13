@@ -12,3 +12,312 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
+  email     String   @unique
+  password  String
+  role      String
+  createdAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+
+  notifications Notification[]
+}
+
+enum UserRole {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+model Admin {
+  id          Int      @id @default(autoincrement())
+  userId      String   @unique
+  firstName   String
+  lastName    String
+  email       String   @unique
+  contactNo   String?
+  designation String?
+  image       String?
+  createdAt   DateTime @default(now())
+}
+
+model Vendor {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique
+  firstName String
+  lastName  String
+  email     String   @unique
+  address   String
+  city      String
+  distric   String?
+  province  String?
+  country   String?
+  contactNo String
+  image     String?
+  createdAt DateTime @default(now())
+
+  // Relations (one-to-many)
+  services Service[]
+}
+
+model customer {
+  id             Int           @id @default(autoincrement())
+  userId         String        @unique
+  firstName      String
+  lastName       String
+  email          String        @unique
+  address        String?
+  city           String?
+  distric        String?
+  province       String?
+  country        String?
+  contactNo      String?
+  image          String?
+  createdAt      DateTime      @default(now())
+  // Relations
+  weddingEvent   WeddingEvent?
+  bookings Booking[]
+  reviews  Review[]
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  recipient String
+  otp       String
+  type      String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model Service {
+  id          Int     @id @default(autoincrement())
+  serviceId   String  @unique
+  serviceName String
+  category    String
+  description String?
+  capacity    String?
+  isActive    Boolean @default(true)
+
+  // Location
+  latitude  Float?
+  longitude Float?
+  country   String?
+  state     String?
+  district  String?
+  city      String?
+  address   String?
+
+  // Relations
+  vendorId String
+  vendor   Vendor           @relation(fields: [vendorId], references: [userId])
+  packages ServicePackage[]
+  photos   ServicePhoto[]
+  bookings Booking[]
+  reviews  Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServicePackage {
+  id          Int     @id @default(autoincrement())
+  packageName String?
+  price       Float?
+  features    String? // could be JSON if you want multiple features
+  serviceId   String
+  service     Service @relation(fields: [serviceId], references: [serviceId])
+}
+
+model ServicePhoto {
+  id        Int     @id @default(autoincrement())
+  imageUrl  String?
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [serviceId])
+}
+
+model WeddingEvent {
+  id          String    @id @default(cuid())
+  title       String
+  GroomName   String?
+  BrideName   String?
+  date        DateTime?
+  startTime   DateTime?
+  endTime     DateTime?
+  location    String?
+  Description String?
+  GuestCount  Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  // Relations
+  customer    customer? @relation(fields: [createdBy], references: [userId])
+  createdBy   String?   @unique
+
+  agenda    WeddingAgenda[]
+  checklist WeddingChecklist[]
+  budget    Budget[]
+  guests    RSVP[]
+}
+
+model WeddingAgenda {
+  id        Int       @id @default(autoincrement())
+  eventId   String
+  Activity  String
+  startTime DateTime?
+  endTime   DateTime?
+  location  String?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  order     Int? // Order of the agenda item
+
+  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+model WeddingChecklist {
+  id          Int      @id @default(autoincrement())
+  eventId     String
+  taskTitle   String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subtasks     ChecklistSubtask[]
+  WeddingEvent WeddingEvent       @relation(fields: [eventId], references: [id])
+}
+
+model ChecklistSubtask {
+  id          Int      @id @default(autoincrement())
+  checklistId Int
+  subtask     String
+  status      String   @default("todo") //to-do, in_progress, done
+  assignedTo  String?
+  bucket      String   @default("6m")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  checklist WeddingChecklist @relation(fields: [checklistId], references: [id])
+}
+
+model Budget {
+  id              Int      @id @default(autoincrement())
+  eventId         String   @unique
+  TotalBudget     Float?
+  AllocatedBudget Float?
+  RemainingBudget Float?
+  SpentBudget     Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  WeddingEvent WeddingEvent     @relation(fields: [eventId], references: [id])
+  categories   BudgetCategory[]
+}
+
+model BudgetCategory {
+  id              Int      @id @default(autoincrement())
+  categoryName    String
+  allocatedAmount Float?
+  spentAmount     Float?   @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  Budget   Budget @relation(fields: [budgetId], references: [id])
+  budgetId Int
+
+  @@unique([categoryName, budgetId])
+}
+
+model RSVP {
+  id             Int        @id @default(autoincrement())
+  eventId        String
+  guestName      String
+  phone          String?
+  Gender         String?
+  childCount     Int?       @default(0)
+  alcoholPref    String? // None, yes, unknown
+  mealPref       String? // Veg, Non-Veg, Vegan, Gluten-Free
+  plus           Int?       @default(0) // number of additional guests
+  side           String? // Bride, Groom, Other
+  responseStatus RSVPStatus @default(PRELISTED)
+  notes          String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  WeddingEvent WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+enum RSVPStatus {
+  PRELISTED // Added to the list but not invited yet
+  INVITED // Officially invited
+  PENDING // Invited but hasn’t responded
+  ACCEPTED // Confirmed attendance
+  DECLINED // Declined the invite
+}
+
+model ServiceCategories {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+enum BookingStatus {
+  INTERESTED
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  serviceId   String
+  customerId  String
+  status      BookingStatus @default(INTERESTED)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  confirmedAt DateTime? // When booking was confirmed by vendor
+  cancelledAt DateTime? // When booking was cancelled
+  completedAt  DateTime? // When service was completed
+
+  // Relations
+  service       Service        @relation(fields: [serviceId], references: [serviceId])
+  customer      customer       @relation(fields: [customerId], references: [userId])
+  review        Review? // one review per booking
+  notifications Notification[]
+
+  @@unique([serviceId, customerId, status]) // Prevent duplicate interested status
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  serviceId  String
+  customerId String
+  bookingId  String   @unique
+  rating     Int // 1 to 5
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  service  Service  @relation(fields: [serviceId], references: [serviceId])
+  customer customer @relation(fields: [customerId], references: [userId])
+  booking  Booking  @relation(fields: [bookingId], references: [id])
+
+  @@unique([serviceId, customerId]) // One review per customer per service
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  bookingId String?
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [userId])
+  booking Booking? @relation(fields: [bookingId], references: [id])
+}
