@@ -1,0 +1,36 @@
+name: Deploy Backend to Railway (with migrations)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run Prisma Migrations (CI -> DATABASE_URL needs to be in GitHub Secrets)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          npx prisma migrate deploy
+
+      - name: Deploy to Railway
+        uses: railwayapp/action@v1
+        with:
+          service: "Backend_hosting" # replace with your Railway service name (match the service in Railway project)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

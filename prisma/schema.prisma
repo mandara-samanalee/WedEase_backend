@@ -318,6 +318,6 @@ model Notification {
   bookingId String?
 
   // Relations
-  user    User     @relation(fields: [userId], references: [userId])
-  booking Booking? @relation(fields: [bookingId], references: [id])
+  user    User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  booking Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
