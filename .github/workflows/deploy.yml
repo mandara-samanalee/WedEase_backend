@@ -22,14 +22,17 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Run Prisma Migrations (CI -> DATABASE_URL needs to be in GitHub Secrets)
+      - name: Run Prisma Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate deploy
+
+      - name: Install Railway CLI
         run: |
-          npx prisma migrate deploy --preview-feature
+          curl -fsSL https://railway.app/install.sh | sh
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
       - name: Deploy to Railway
-        uses: railwayhq/railway-action@v1
-        with:
-          service: "WedEase_backend"
+        env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway up --service WedEase_backend
