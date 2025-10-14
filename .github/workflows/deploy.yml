@@ -29,7 +29,7 @@ jobs:
           npx prisma migrate deploy
 
       - name: Deploy to Railway
-        uses: railwayapp/actions@v1
+        uses: railwayhq/railway-action@v1
         with:
           service: "WedEase_backend"
         env:
