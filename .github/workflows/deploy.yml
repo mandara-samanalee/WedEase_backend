@@ -26,11 +26,10 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          npx prisma migrate deploy
+          npx prisma migrate deploy --preview-feature
 
       - name: Deploy to Railway
         uses: railwayhq/railway-action@v1
         with:
           service: "WedEase_backend"
-        env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
