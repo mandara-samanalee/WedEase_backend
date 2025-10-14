@@ -35,4 +35,4 @@ jobs:
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service WedEase_backend
+        run: railway up --service WedEase_backend --project ${{ secrets.RAILWAY_PROJECT_ID }}
