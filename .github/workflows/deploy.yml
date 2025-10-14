@@ -31,6 +31,6 @@ jobs:
       - name: Deploy to Railway
         uses: railwayapp/railway-action@v1
         with:
-          service: "WedEase_backend" # replace with your Railway service name (match the service in Railway project)
+          service: "WedEase_backend"
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
