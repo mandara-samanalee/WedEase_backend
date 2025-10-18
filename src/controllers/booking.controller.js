@@ -1,3 +1,4 @@
+import prisma from "../config/db.js";
 import {
     createOrUpdateBooking,
     getBookingsByCustomerId,
@@ -5,6 +6,7 @@ import {
     deleteBookingById,
     getVendorBookings
 } from '../models/booking.model.js';
+import { createNotification } from '../models/notification.model.js';
 
 // Create or update booking controller
 export const createOrUpdateBookingController = async (req, res) => {
@@ -32,10 +34,25 @@ export const createOrUpdateBookingController = async (req, res) => {
 
         const booking = await createOrUpdateBooking(serviceId, customerId, status);
 
+        // Get vendorId from the service table
+        const service = await prisma.service.findUnique({
+            where: { serviceId },
+            select: { vendorId: true },
+        });
+        const vendorId = service?.vendorId;
+
+        // Send notification only when status is PENDING
+        if (status === 'PENDING' && vendorId) {
+            const title = 'New Booking Created';
+            const message = `Your booking for service ${serviceId} has been created and is now pending confirmation.`;
+
+            await createNotification([customerId, vendorId], booking.id, title, message);
+        }
+
         return res.status(200).json({
             code: 200,
             success: true,
-            message: `Service ${status.toLowerCase()} successfully`,
+            message: `Booking ${status.toLowerCase()} successfully${status === 'PENDING' ? ' and notification sent' : ''}`,
             data: booking
         });
     } catch (error) {
@@ -107,10 +124,44 @@ export const updateBookingStatusController = async (req, res) => {
 
         const booking = await updateBookingStatus(bookingId, status);
 
+        // Fetch vendorId for notification
+        const service = await prisma.service.findUnique({
+            where: { serviceId: booking.serviceId },
+            select: { vendorId: true },
+        });
+        const vendorId = service?.vendorId;
+
+        // Trigger Notification
+        if (status !== 'INTERESTED' && vendorId) {
+            let title = '';
+            let message = '';
+
+            switch (status) {
+                case 'PENDING':
+                    title = 'New Booking Created';
+                    message = `Your booking for service ${booking.serviceId} has been created with status pending. We’ll notify you once it’s confirmed.`;
+                    break;
+                case 'CONFIRMED':
+                    title = 'Booking Confirmed';
+                    message = `Your booking for service ${booking.serviceId} has been confirmed. Thank you for choosing us!`;
+                    break;
+                case 'CANCELLED':
+                    title = 'Booking Cancelled';
+                    message = `Your booking for service ${booking.serviceId} has been cancelled. Please contact the respective vendor if this was unexpected.`;
+                    break;
+                case 'COMPLETED':
+                    title = 'Booking Completed';
+                    message = `Your booking for service ${booking.serviceId} has been successfully completed. We hope you had a great experience!`;
+                    break;
+            }
+
+            await createNotification([booking.customerId, vendorId], booking.id, title, message);
+        }
+
         return res.status(200).json({
             code: 200,
             success: true,
-            message: `Booking status updated to ${status.toLowerCase()} successfully`,
+            message: `Booking status updated to ${status.toLowerCase()} successfully and notification sent`,
             data: booking
         });
     } catch (error) {
@@ -156,31 +207,31 @@ export const deleteBookingController = async (req, res) => {
 
 // get all bookings by vendorId
 export const getVendorBookingsController = async (req, res) => {
-  try {
-    const { vendorId } = req.params;
+    try {
+        const { vendorId } = req.params;
 
-    const services = await getVendorBookings(vendorId);
+        const services = await getVendorBookings(vendorId);
 
-    if (!services || services.length === 0) {
-      return res.status(404).json({
-        code: 404,
-        success: false,
-        message: "No services or bookings found for this vendor",
-      });
+        if (!services || services.length === 0) {
+            return res.status(404).json({
+                code: 404,
+                success: false,
+                message: "No services or bookings found for this vendor",
+            });
+        }
+
+        return res.status(200).json({
+            code: 200,
+            success: true,
+            message: "Vendor bookings fetched successfully",
+            data: services,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            code: 400,
+            success: false,
+            message: " Failed to fetch vendor bookings",
+            error: error.message,
+        });
     }
-
-    return res.status(200).json({
-      code: 200,
-      success: true,
-      message: "Vendor bookings fetched successfully",
-      data: services,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      code: 400,
-      success: false,
-      message:" Failed to fetch vendor bookings", 
-      error: error.message,
-    });
-  }
 };

@@ -12,7 +12,6 @@ export const createOrUpdateBooking = async (serviceId, customerId, status) => {
         });
 
         let booking;
-
         if (existingBooking) {
             // Update existing booking status
             booking = await prisma.booking.update({

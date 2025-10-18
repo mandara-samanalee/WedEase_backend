@@ -15,6 +15,7 @@ import agendaRoutes from "./agenda.routes.js";
 import bookingRoutes from "./booking.routes.js";
 import reviewRoutes from "./review.routes.js";
 import adminRoutes from "./admin.routes.js";
+import notificationRoutes from "./notification.routes.js";
 
 const router = express.Router();
 
@@ -33,5 +34,6 @@ router.use('/agenda', agendaRoutes);
 router.use('/booking', bookingRoutes);
 router.use('/review', reviewRoutes);
 router.use('/admin', adminRoutes);
+router.use('/notification', notificationRoutes);
 
 export default router;

@@ -21,6 +21,7 @@ router.put('/update-status', updateBookingStatusController);
 // Delete booking by ID
 router.delete('/delete/:id', deleteBookingController);
 
+// Get bookings by vendorId
 router.get('/vendor/:vendorId', getVendorBookingsController);
 
 export default router;
